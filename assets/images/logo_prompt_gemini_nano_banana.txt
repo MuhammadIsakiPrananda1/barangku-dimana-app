@@ -1,0 +1,18 @@
+Prompt Gemini Nano Banana:
+
+Create a modern, friendly mobile app logo for an Indonesian app named "Barangku Dimana?".
+Concept: smart item locator and memory helper.
+Style: clean geometric icon, premium but playful, flat vector with subtle depth, high contrast.
+Visual metaphor: a storage box + location pin + lens in one symbol.
+Primary palette: #006494, #39BFA7, #13293D, white accents.
+Avoid purple-heavy palette.
+Must look strong at small size (48x48) and app icon size (1024x1024).
+Output:
+1) transparent PNG 1024x1024
+2) SVG vector
+3) Android adaptive icon foreground optimized shape
+4) 3 variants: Minimal, Bold, Rounded.
+Typography option: Plus Jakarta Sans bold for wordmark (optional lockup).
+
+Negative prompt:
+no photorealism, no gradients that reduce legibility, no tiny details, no generic map pin alone, no text-heavy composition.
