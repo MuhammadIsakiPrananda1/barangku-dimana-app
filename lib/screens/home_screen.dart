@@ -13,6 +13,7 @@ import 'edit_item_screen.dart';
 import '../models/item_model.dart';
 import '../services/scanner_service.dart';
 import '../services/voice_service.dart';
+import '../services/report_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -153,6 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   _buildModernHeader(isDark),
+                  _buildInsightsDashboard(isDark),
                   _buildStatSection(isDark),
                   _buildSearchAndFilter(isDark),
                   Expanded(
@@ -259,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-    ).animate().scale(delay: 200.ms, duration: 600.ms, curve: Curves.easeOutBack);
+    ).animate().fadeIn(delay: 200.ms, duration: 400.ms); // Simpler animation
   }
 
   Widget _buildModernHeader(bool isDark) {
@@ -371,9 +373,164 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () => _controller.toggleFavorites(!_controller.showFavoritesOnly),
             isSelected: _controller.showFavoritesOnly,
           ),
+          const SizedBox(width: 8),
+          _buildActionChip(
+            'Ekspor Laporan',
+            Icons.picture_as_pdf_rounded,
+            AppTheme.cyberBlue,
+            isDark,
+            onTap: () => _exportReport(),
+          ),
         ],
       ),
-    ).animate().fadeIn(duration: 600.ms, delay: 100.ms).slideX(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 400.ms); // Simpler animation
+  }
+
+  Widget _buildActionChip(String title, IconData icon, Color color, bool isDark, {required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 16),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInsightsDashboard(bool isDark) {
+    if (_controller.allItems.isEmpty) return const SizedBox.shrink();
+
+    final borrowedCount = _controller.allItems.where((i) => i.peminjam != null).length;
+    final now = DateTime.now();
+    final criticalCount = _controller.allItems.where((i) {
+      if (i.garansiHabis != null) {
+        final days = i.garansiHabis!.difference(now).inDays;
+        if (days >= 0 && days <= 7) return true;
+      }
+      if (i.tglKadaluarsa != null) {
+        final days = i.tglKadaluarsa!.difference(now).inDays;
+        if (days >= 0 && days <= 7) return true;
+      }
+      return false;
+    }).length;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.slate800.withValues(alpha: 0.5) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: (isDark ? Colors.white : AppTheme.emerald).withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'RINGKASAN STATUS',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                  color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.4),
+                ),
+              ),
+              Icon(Icons.insights_rounded, size: 14, color: AppTheme.emerald.withValues(alpha: 0.5)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildInsightItem(
+                  'Total Barang',
+                  _controller.allItems.length.toString(),
+                  Icons.inventory_2_outlined,
+                  AppTheme.emerald,
+                  isDark,
+                ),
+              ),
+              Container(width: 1, height: 32, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05)),
+              Expanded(
+                child: _buildInsightItem(
+                  'Dipinjam',
+                  borrowedCount.toString(),
+                  Icons.handshake_outlined,
+                  AppTheme.cyberBlue,
+                  isDark,
+                ),
+              ),
+              Container(width: 1, height: 32, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05)),
+              Expanded(
+                child: _buildInsightItem(
+                  'Sangat Penting',
+                  criticalCount.toString(),
+                  Icons.notification_important_outlined,
+                  Colors.redAccent,
+                  isDark,
+                  isCritical: criticalCount > 0,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate().fadeIn().slideY(begin: 0.1, end: 0);
+  }
+
+  Widget _buildInsightItem(String label, String value, IconData icon, Color color, bool isDark, {bool isCritical = false}) {
+    return Column(
+      children: [
+        Icon(icon, size: 18, color: isCritical ? Colors.redAccent : color.withValues(alpha: 0.6)),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+            color: isDark ? Colors.white : AppTheme.slate900,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.w700,
+            color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.4),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _exportReport() async {
+    HapticFeedback.mediumImpact();
+    await ReportService.generateInventoryPdf(_controller.allItems);
   }
 
   Widget _buildMiniStatChip(String title, String value, Color color, IconData icon, bool isDark, {VoidCallback? onTap, bool isSelected = false}) {
@@ -447,70 +604,64 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.75),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: (_isSearchFocused ? AppTheme.emerald : (isDark ? Colors.white : AppTheme.emerald)).withValues(alpha: 0.12),
-                            width: 1.5,
-                          ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.95), // Solid opaque color
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: (_isSearchFocused ? AppTheme.emerald : (isDark ? Colors.white : AppTheme.emerald)).withValues(alpha: 0.15),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      focusNode: _searchFocusNode,
+                      textAlignVertical: TextAlignVertical.center,
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: _isListening ? 'Mendengarkan...' : 'Cari barang atau lokasi...',
+                        hintStyle: TextStyle(
+                          color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.35),
+                          fontWeight: FontWeight.w500,
                         ),
-                        child: TextField(
-                          controller: _searchController,
-                          focusNode: _searchFocusNode,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                          decoration: InputDecoration(
-                            isDense: true,
-                            hintText: _isListening ? 'Mendengarkan...' : 'Cari barang atau lokasi...',
-                            hintStyle: TextStyle(
-                              color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.35),
-                              fontWeight: FontWeight.w500,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.search_rounded, 
-                              color: (_isSearchFocused ? AppTheme.emerald : AppTheme.emerald.withValues(alpha: 0.4)), 
-                              size: 22
-                            ).animate(target: _isSearchFocused ? 1 : 0).scale(begin: const Offset(0.9, 0.9), end: const Offset(1.05, 1.05)),
-                            suffixIcon: Padding(
-                              padding: const EdgeInsets.only(right: 6),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (_searchController.text.isNotEmpty)
-                                    IconButton(
-                                      icon: const Icon(Icons.close_rounded, size: 18),
-                                      onPressed: () => _searchController.clear(),
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                    ).animate().scale().fadeIn(),
-                                  const SizedBox(width: 8),
-                                  _buildSearchActionIconMini(
-                                    _isListening ? Icons.mic_rounded : Icons.mic_none_rounded, 
-                                    _isListening ? Colors.redAccent : AppTheme.emerald,
-                                    _startVoiceSearch,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _buildSearchActionIconMini(
-                                    Icons.qr_code_scanner_rounded, 
-                                    AppTheme.emerald, 
-                                    _startBarcodeScan,
-                                  ),
-                                ],
+                        prefixIcon: Icon(
+                          Icons.search_rounded, 
+                          color: (_isSearchFocused ? AppTheme.emerald : AppTheme.emerald.withValues(alpha: 0.4)), 
+                          size: 22
+                        ).animate(target: _isSearchFocused ? 1 : 0).scale(begin: const Offset(0.9, 0.9), end: const Offset(1.05, 1.05)),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (_searchController.text.isNotEmpty)
+                                IconButton(
+                                  icon: const Icon(Icons.close_rounded, size: 18),
+                                  onPressed: () => _searchController.clear(),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ).animate().scale().fadeIn(),
+                              const SizedBox(width: 8),
+                              _buildSearchActionIconMini(
+                                _isListening ? Icons.mic_rounded : Icons.mic_none_rounded, 
+                                _isListening ? Colors.redAccent : AppTheme.emerald,
+                                _startVoiceSearch,
                               ),
-                            ),
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            filled: false,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                              const SizedBox(width: 8),
+                              _buildSearchActionIconMini(
+                                Icons.qr_code_scanner_rounded, 
+                                AppTheme.emerald, 
+                                _startBarcodeScan,
+                              ),
+                            ],
                           ),
                         ),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        filled: false,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       ),
                     ),
                   ),
@@ -610,116 +761,122 @@ class _HomeScreenState extends State<HomeScreen> {
         return StatefulBuilder(
           builder: (context, setSheetState) {
             final isDark = Theme.of(context).brightness == Brightness.dark;
-            return ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(28, 12, 28, 40),
-                  decoration: BoxDecoration(
-                    color: (isDark ? AppTheme.slate900 : Colors.white).withValues(alpha: 0.9),
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            return Container(
+              padding: const EdgeInsets.fromLTRB(28, 12, 28, 40),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.slate900 : Colors.white, // Solid opaque background
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(2),
+                      Text(
+                        'Filter Barang',
+                        style: TextStyle(
+                          fontSize: 20, 
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white : AppTheme.slate900,
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Filter Barang',
-                            style: TextStyle(
-                              fontSize: 20, 
-                              fontWeight: FontWeight.w900,
-                              color: isDark ? Colors.white : AppTheme.slate900,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setSheetState(() => localSelectedCategory = 'Semua');
-                            },
-                            child: const Text('Reset', style: TextStyle(fontWeight: FontWeight.w700)),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Pilih Kategori',
-                          style: TextStyle(
-                            fontSize: 12, 
-                            fontWeight: FontWeight.w800, 
-                            color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.4),
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: (isDark ? Colors.white : AppTheme.emerald).withValues(alpha: 0.08),
-                          ),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: localSelectedCategory,
-                            isExpanded: true,
-                            icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.emerald),
-                            dropdownColor: isDark ? AppTheme.slate900 : Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            items: [
-                              const DropdownMenuItem(
-                                value: 'Semua',
-                                child: Text('🏠 Semua Kategori', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                              ),
-                              ...CategoryModel.allCategories.map((cat) {
-                                return DropdownMenuItem(
-                                  value: cat.name,
-                                  child: Text('${cat.emoji} ${cat.name}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                                );
-                              }).toList(),
-                            ],
-                            onChanged: (value) {
-                              if (value != null) {
-                                setSheetState(() => localSelectedCategory = value);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 54,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _controller.setCategory(localSelectedCategory);
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            elevation: 0,
-                          ),
-                          child: const Text('Terapkan Filter', style: TextStyle(fontWeight: FontWeight.w900)),
-                        ),
+                      TextButton(
+                        onPressed: () {
+                          setSheetState(() => localSelectedCategory = 'Semua');
+                        },
+                        child: const Text('Reset', style: TextStyle(fontWeight: FontWeight.w700)),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Pilih Kategori',
+                      style: TextStyle(
+                        fontSize: 12, 
+                        fontWeight: FontWeight.w800, 
+                        color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.4),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: (isDark ? Colors.white : AppTheme.emerald).withValues(alpha: 0.08),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: localSelectedCategory,
+                        isExpanded: true,
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.emerald),
+                        dropdownColor: isDark ? AppTheme.slate900 : Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        items: [
+                          const DropdownMenuItem(
+                            value: 'Semua',
+                            child: Row(
+                              children: [
+                                Icon(Icons.home_max_outlined, color: AppTheme.emerald, size: 20),
+                                SizedBox(width: 10),
+                                Text('Semua Kategori', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                              ],
+                            ),
+                          ),
+                          ...CategoryModel.allCategories.map((cat) {
+                            return DropdownMenuItem(
+                              value: cat.name,
+                              child: Row(
+                                children: [
+                                  Icon(cat.icon, color: cat.color, size: 20),
+                                  const SizedBox(width: 10),
+                                  Text(cat.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) {
+                            setSheetState(() => localSelectedCategory = value);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _controller.setCategory(localSelectedCategory);
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('Terapkan Filter', style: TextStyle(fontWeight: FontWeight.w900)),
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -780,7 +937,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            'v1.1.0',
+            'v1.2.0',
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,

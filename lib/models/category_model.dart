@@ -16,55 +16,85 @@ class CategoryModel {
   static const List<CategoryModel> allCategories = [
     CategoryModel(
       name: 'Elektronik',
-      icon: Icons.devices_rounded,
+      icon: Icons.devices_outlined,
       color: Color(0xFF2196F3),
       emoji: '📱',
     ),
     CategoryModel(
       name: 'Kunci',
-      icon: Icons.key_rounded,
+      icon: Icons.key_outlined,
       color: Color(0xFFFFC107),
       emoji: '🔑',
     ),
     CategoryModel(
       name: 'Dokumen',
-      icon: Icons.description_rounded,
+      icon: Icons.description_outlined,
       color: Color(0xFF4CAF50),
       emoji: '📄',
     ),
     CategoryModel(
       name: 'Pakaian',
-      icon: Icons.checkroom_rounded,
+      icon: Icons.checkroom_outlined,
       color: Color(0xFFE91E63),
       emoji: '👕',
     ),
     CategoryModel(
       name: 'Alat',
-      icon: Icons.build_rounded,
+      icon: Icons.build_outlined,
       color: Color(0xFFFF5722),
       emoji: '🔧',
     ),
     CategoryModel(
       name: 'Obat',
-      icon: Icons.medical_services_rounded,
+      icon: Icons.medical_services_outlined,
       color: Color(0xFFF44336),
       emoji: '💊',
     ),
     CategoryModel(
       name: 'Mainan',
-      icon: Icons.toys_rounded,
+      icon: Icons.toys_outlined,
       color: Color(0xFF9C27B0),
       emoji: '🎮',
     ),
     CategoryModel(
       name: 'Buku',
-      icon: Icons.menu_book_rounded,
+      icon: Icons.menu_book_outlined,
       color: Color(0xFF795548),
       emoji: '📚',
     ),
     CategoryModel(
+      name: 'Dapur',
+      icon: Icons.restaurant_outlined,
+      color: Color(0xFFE67E22),
+      emoji: '🍳',
+    ),
+    CategoryModel(
+      name: 'Kantor',
+      icon: Icons.business_center_outlined,
+      color: Color(0xFF34495E),
+      emoji: '💼',
+    ),
+    CategoryModel(
+      name: 'Koleksi',
+      icon: Icons.collections_bookmark_outlined,
+      color: Color(0xFF1ABC9C),
+      emoji: '🔖',
+    ),
+    CategoryModel(
+      name: 'Olahraga',
+      icon: Icons.sports_basketball_outlined,
+      color: Color(0xFFD35400),
+      emoji: '🏀',
+    ),
+    CategoryModel(
+      name: 'Perhiasan',
+      icon: Icons.watch_outlined,
+      color: Color(0xFFF1C40F),
+      emoji: '⌚',
+    ),
+    CategoryModel(
       name: 'Lainnya',
-      icon: Icons.category_rounded,
+      icon: Icons.category_outlined,
       color: Color(0xFF607D8B),
       emoji: '📦',
     ),
@@ -83,7 +113,7 @@ class CategoryModel {
   }
 
   static IconData getIconByName(String name) {
-    return getByName(name)?.icon ?? Icons.category_rounded;
+    return getByName(name)?.icon ?? Icons.category_outlined;
   }
 
   static String getEmojiByName(String name) {

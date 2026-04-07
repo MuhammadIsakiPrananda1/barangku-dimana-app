@@ -46,9 +46,10 @@ class CategoryPicker extends StatelessWidget {
               value: category.name,
               child: Row(
                 children: [
-                  Text(
-                    category.emoji,
-                    style: const TextStyle(fontSize: 18),
+                  Icon(
+                    category.icon,
+                    color: category.color,
+                    size: 20,
                   ),
                   const SizedBox(width: 10),
                   Text(

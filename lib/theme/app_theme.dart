@@ -51,9 +51,9 @@ class AppTheme {
       border: Border.all(color: emerald.withValues(alpha: 0.12)),
       boxShadow: [
         BoxShadow(
-          color: emerald.withValues(alpha: 0.1),
-          blurRadius: 30,
-          offset: const Offset(0, 10),
+          color: emerald.withValues(alpha: 0.04), // Reduced opacity
+          blurRadius: 16, // Reduced blur
+          offset: const Offset(0, 4), // Reduced offset
         ),
       ],
     );
@@ -66,9 +66,9 @@ class AppTheme {
       border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.3),
-          blurRadius: 40,
-          offset: const Offset(0, 15),
+          color: Colors.black.withValues(alpha: 0.2), // Reduced opacity
+          blurRadius: 20, // Reduced blur
+          offset: const Offset(0, 6), // Reduced offset
         ),
       ],
     );
@@ -145,8 +145,8 @@ class AppTheme {
       
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          elevation: 8,
-          shadowColor: emerald.withValues(alpha: 0.4),
+          elevation: 4, // Reduced elevation
+          shadowColor: emerald.withValues(alpha: 0.25), // Reduced shadow
           foregroundColor: Colors.white,
           backgroundColor: emerald,
           shape: RoundedRectangleBorder(
@@ -158,7 +158,7 @@ class AppTheme {
       ),
 
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        elevation: 12,
+        elevation: 6, // Reduced elevation
         backgroundColor: emerald,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -251,8 +251,8 @@ class AppTheme {
       
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          elevation: 12,
-          shadowColor: Colors.black.withValues(alpha: 0.5),
+          elevation: 6, // Reduced elevation from 12
+          shadowColor: Colors.black.withValues(alpha: 0.3), // Reduced shadow
           foregroundColor: slate900,
           backgroundColor: emerald,
           shape: RoundedRectangleBorder(
@@ -264,7 +264,7 @@ class AppTheme {
       ),
 
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        elevation: 12,
+        elevation: 8, // Reduced elevation from 12
         backgroundColor: emerald,
         foregroundColor: slate900,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

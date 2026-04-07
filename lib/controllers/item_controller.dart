@@ -103,46 +103,74 @@ class ItemController extends ChangeNotifier {
 
     // Schedule Warranty
     if (item.garansiHabis != null) {
-      if (item.garansiHabis!.isAfter(DateTime.now())) {
+      final daysToDue = item.garansiHabis!.difference(DateTime.now()).inDays;
+      if (daysToDue >= 0) {
+        // Exact day
         notif.scheduleNotification(
-          id: item.id! * 10 + 0,
-          title: 'Garansi Habis!',
-          body: 'Masa garansi ${item.namaBarang} habis hari ini.',
+          id: item.id! * 20 + 0,
+          title: 'Garansi ${_getShortName(item.namaBarang)} Habis Hari Ini!',
+          body: 'Segera cek kondisi barang sebelum terlambat.',
           scheduledDate: item.garansiHabis!,
         );
+        // 7 days before warning
+        if (daysToDue > 7) {
+          notif.scheduleNotification(
+            id: item.id! * 20 + 1,
+            title: 'Garansi ${_getShortName(item.namaBarang)} Sisa 7 Hari!',
+            body: 'Masa garansi akan berakhir seminggu lagi.',
+            scheduledDate: item.garansiHabis!.subtract(const Duration(days: 7)),
+          );
+        }
       }
     }
 
     // Schedule Expiry
     if (item.tglKadaluarsa != null) {
-      if (item.tglKadaluarsa!.isAfter(DateTime.now())) {
+      final daysToDue = item.tglKadaluarsa!.difference(DateTime.now()).inDays;
+      if (daysToDue >= 0) {
+        // Exact day
         notif.scheduleNotification(
-          id: item.id! * 10 + 1,
+          id: item.id! * 20 + 10,
           title: 'Barang Kadaluarsa!',
-          body: 'Masa berlaku ${item.namaBarang} habis hari ini.',
+          body: '${item.namaBarang} sudah tidak layak digunakan.',
           scheduledDate: item.tglKadaluarsa!,
         );
+        // 7 days before warning
+        if (daysToDue > 7) {
+          notif.scheduleNotification(
+            id: item.id! * 20 + 11,
+            title: 'Kadaluarsa Sisa 7 Hari!',
+            body: '${item.namaBarang} akan kadaluarsa minggu depan.',
+            scheduledDate: item.tglKadaluarsa!.subtract(const Duration(days: 7)),
+          );
+        }
       }
     }
 
     // Schedule Return (Lending)
     if (item.tglKembali != null && item.peminjam != null) {
-      if (item.tglKembali!.isAfter(DateTime.now())) {
+      final daysToDue = item.tglKembali!.difference(DateTime.now()).inDays;
+      if (daysToDue >= 0) {
+        // Exact day
         notif.scheduleNotification(
-          id: item.id! * 10 + 2,
-          title: 'Waktunya Pengembalian!',
-          body: '${item.peminjam} harus mengembalikan ${item.namaBarang} hari ini.',
+          id: item.id! * 20 + 20,
+          title: 'Hari Ini Pengembalian!',
+          body: '${item.peminjam} harus mengembalikan ${item.namaBarang}.',
           scheduledDate: item.tglKembali!,
         );
       }
     }
   }
 
+  String _getShortName(String name) {
+    return name.length > 15 ? '${name.substring(0, 12)}...' : name;
+  }
+
   void _cancelAlerts(int itemId) {
     final notif = NotificationService();
-    notif.cancelNotification(itemId * 10 + 0);
-    notif.cancelNotification(itemId * 10 + 1);
-    notif.cancelNotification(itemId * 10 + 2);
+    for (int i = 0; i < 30; i++) {
+      notif.cancelNotification(itemId * 20 + i);
+    }
   }
 
   Future<bool> toggleFavorite(ItemModel item, bool isFavorite) async {
