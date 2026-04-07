@@ -167,7 +167,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'v1.1.0',
+                      'v1.2.0',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppTheme.slate400,
@@ -211,23 +211,24 @@ class _SplashScreenState extends State<SplashScreen> {
                 curve: Curves.easeOutCubic)
             .fadeIn(duration: 700.ms),
 
-        // Pulsing ring
+        // Simple pulsing ring - reduced complexity
         Container(
           width: 112,
           height: 112,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: AppTheme.emerald.withValues(alpha: 0.18),
-              width: 1.5,
+              color: AppTheme.emerald.withValues(alpha: 0.12),
+              width: 1.2,
             ),
           ),
         )
             .animate(onPlay: (c) => c.repeat(reverse: true))
-            .custom(
-              duration: 1800.ms,
-              builder: (ctx, v, child) =>
-                  Transform.scale(scale: 1.0 + v * 0.06, child: child),
+            .scale(
+              begin: const Offset(1.0, 1.0),
+              end: const Offset(1.04, 1.04), // Subtle scale only
+              duration: 2000.ms,
+              curve: Curves.easeInOut,
             )
             .fadeIn(duration: 700.ms),
 
@@ -393,8 +394,8 @@ class _LightDotGridPainter extends CustomPainter {
       ..color = const Color(0xFF10B981).withValues(alpha: 0.06)
       ..style = PaintingStyle.fill;
 
-    const spacing = 30.0;
-    const radius = 1.2;
+    const spacing = 48.0; // Increased spacing (less dots)
+    const radius = 1.0; // Smaller radius
 
     for (double x = spacing / 2; x < size.width; x += spacing) {
       for (double y = spacing / 2; y < size.height; y += spacing) {

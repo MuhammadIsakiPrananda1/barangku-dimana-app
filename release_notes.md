@@ -1,25 +1,51 @@
-# 📦 Barangku Dimana v1.1.0 Release
+# 🚀 Release v1.2.0 - Performa & Produktivitas Pintar
 
-Kami sangat senang merilis **Barangku Dimana v1.1.0** — Aplikasi pintar untuk mencatat dan mencari lokasi terakhir barang Anda dengan mudah, cepat, dan aman! Versi perdana ini difokuskan pada kelengkapan fitur inti yang esensial.
+Selamat datang di versi **1.2.0** dari **Barangku Dimana?**. Pembaruan kali ini berfokus pada dua hal utama: membuat aplikasi berjalan sangat ringan di semua jenis perangkat (*HP Kentang Friendly*) dan memberikan fitur produktivitas yang memberdayakan pengguna.
 
-## ✨ Fitur Utama (New Features)
-* **Penyimpanan Lokal (SQLite)**: Data aman dan dapat diakses sepenuhnya secara offline.
-* **Lampiran Foto**: Anda dapat melampirkan foto barang menggunakan kamera atau galeri untuk kemudahan pencarian.
-* **Visualisasi Data**: Statistik dan grafik interaktif (fl_chart) untuk melacak kategori barang.
-* **Ekspor Dokumen**: Cetak data inventaris ke format PDF atau ekspor ke CSV dengan satu klik.
-* **Scanner QR & Barcode**: Pindai label barang yang sudah ada untuk pencarian instan.
-* **Voice to Text**: Input nama atau deskripsi barang menggunakan suara (hands-free).
-* **Notifikasi Lokal**: Dapatkan pengingat untuk tugas atau pencarian barang.
+---
 
-## 🛠️ Perbaikan & Pengoptimalan (Improvements)
-* Optimalisasi performa build dengan arsitektur arsitektur ARM dan X86.
-* Integrasi dokumentasi open-source (`README.md`, `CONTRIBUTING.md`, dll).
-* Penambahan banner promosi dan icon aplikasi kustom.
+## 🔥 Highlight Utama
 
-## 📥 Aset Unduhan (Download)
-Pada rilis ini, kami menyediakan tiga varian berkas instalasi `.apk` berdasarkan jenis arsitektur device Android Anda:
-1. `app-arm64-v8a-release.apk` - Untuk perangkat Android 64-bit modern (Sebagian besar smartphone saat ini).
-2. `app-armeabi-v7a-release.apk` - Untuk perangkat Android 32-bit (Perangkat lawas).
-3. `app-x86_64-release.apk` - Untuk emulator Android atau perangkat berbasis Intel x86.
+### ⚡ Performa Tanpa Batas ("HP Kentang" Friendly)
+Kami telah merombak total sistem antarmuka untuk memastikan kelancaran maksimal:
+- **GPU Optimization:** Menghapus penggunaan `BackdropFilter` (Blur) yang menyerap banyak daya kartu grafis.
+- **Shadow Refinement:** Menyederhanakan kompleksitas bayangan (*shadows*) di seluruh aplikasi untuk mempercepat proses *rendering*.
+- **Efficient Animations:** Animasi transisi yang berat digantikan dengan efek `Fade` yang lebih ringan namun tetap terasa premium.
 
-Silakan unduh pada bagian aset di bawah!
+### 📊 Pusat Wawasan (Insights Dashboard)
+Pantau inventaris Anda secara sekilas melalui dashboard baru di halaman utama:
+- **Status Pinjam:** Ketahui berapa banyak barang yang sedang tidak ada di tempat.
+- **Peringatan Penting:** Deteksi dini barang yang mendekati masa kadaluarsa atau garansi habis.
+
+### 📄 Ekspor Laporan PDF Profesional
+Butuh daftar inventaris fisik? Sekarang Anda bisa membuat laporan PDF format A4 yang rapi langsung dari aplikasi. Sangat berguna untuk arsip pribadi atau daftar pindahan.
+
+### 🔔 Notifikasi Pintar 7 Hari
+Jangan biarkan garansi terbuang percuma! Aplikasi sekarang akan mengingatkan Anda **7 hari sebelum** masa garansi atau kadaluarsa berakhir.
+
+### 🎨 Ikon Modern (Material Outline)
+Tampilan aplikasi diperbarui dengan menggunakan Ikon Outline yang lebih bersih, profesional, dan kohesif di seluruh layar.
+
+---
+
+## 🛠️ Daftar Perubahan Lengkap
+
+- **[ADD]** 5 Kategori Baru: Dapur, Kantor, Koleksi, Olahraga, Perhiasan.
+- **[ADD]** Dashboard Statistik di layar utama.
+- **[ADD]** Fitur "Ekspor Laporan PDF" untuk inventaris.
+- **[ADD]** Sistem Notifikasi Pengingat (Warranty & Expiry).
+- **[UPDATE]** Migrasi dari Emoji ke Ikon Outline di seluruh kategori.
+- **[UPDATE]** Sinkronisasi versi 1.2.0 pada semua komponen sistem.
+- **[FIX]** Optimasi penggunaan memori dan GPU pada layar utama.
+
+---
+
+## 📦 Cara Instalasi
+1. Unduh file `app-release.apk` dari bagian assets di bawah ini.
+2. Instal di perangkat Android Anda (izinkan instalasi dari sumber tidak dikenal jika diminta).
+3. Selamat menikmati aplikasi yang lebih ringan dan pintar!
+
+---
+
+**Neverland Studio**
+*Mencatat. Menyimpan. Menemukan.*

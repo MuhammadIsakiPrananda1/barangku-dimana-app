@@ -147,9 +147,10 @@ class ItemCard extends StatelessWidget {
         const SizedBox(height: 2),
         Row(
           children: [
-            Text(
-              CategoryModel.getEmojiByName(item.kategori),
-              style: const TextStyle(fontSize: 12),
+            Icon(
+              CategoryModel.getIconByName(item.kategori),
+              color: categoryColor.withValues(alpha: 0.8),
+              size: 14,
             ),
             const SizedBox(width: 4),
             Text(
@@ -185,7 +186,11 @@ class ItemCard extends StatelessWidget {
     return Container(
       color: categoryColor.withValues(alpha: 0.05),
       child: Center(
-        child: Text(CategoryModel.getEmojiByName(item.kategori), style: const TextStyle(fontSize: 22)),
+        child: Icon(
+          CategoryModel.getIconByName(item.kategori),
+          color: categoryColor.withValues(alpha: 0.2),
+          size: 28,
+        ),
       ),
     );
   }
