@@ -5,6 +5,11 @@ Semua perubahan penting pada proyek ini akan didokumentasikan dalam file ini.
 Format penulisan didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 dan proyek ini mengikuti [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-04-13
+
+### Diperbarui
+- Sinkronisasi versi aplikasi menjadi 1.3.0 di semua komponen sistem (Splash, Home, Gradle, Pubspec).
+
 ## [1.2.0] - 2026-04-07
 
 ### Ditambahkan
@@ -35,4 +40,4 @@ dan proyek ini mengikuti [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ---
 
-*Terakhir diperbarui: 7 April 2026*
+*Terakhir diperbarui: 13 April 2026*

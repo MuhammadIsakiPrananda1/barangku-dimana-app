@@ -8,6 +8,7 @@ import '../models/item_model.dart';
 import '../controllers/item_controller.dart';
 import '../services/image_service.dart';
 import '../services/scanner_service.dart';
+import '../services/ai_service.dart';
 import '../theme/app_theme.dart';
 import '../models/category_model.dart';
 
@@ -24,14 +25,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
   final _lokasiController = TextEditingController();
   final _catatanController = TextEditingController();
   final _barcodeController = TextEditingController();
-  final _peminjamController = TextEditingController();
   final ImageService _imageService = ImageService();
 
   DateTime? _garansiHabis;
   DateTime? _tglKadaluarsa;
-  DateTime? _tglPinjam;
-  DateTime? _tglKembali;
-
   String? _imagePath;
   String _selectedCategory = 'Lainnya';
   bool _isSaving = false;
@@ -42,8 +39,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
     _lokasiController.dispose();
     _catatanController.dispose();
     _barcodeController.dispose();
-    _peminjamController.dispose();
     super.dispose();
+  }
+
+  void _applyAISuggestion() {
+    final name = _namaController.text.trim();
+    if (name.isEmpty) return;
+    HapticFeedback.heavyImpact();
+    final predictedCat = AIService.predictCategory(name);
+    setState(() {
+      _selectedCategory = predictedCat;
+      if (_lokasiController.text.isEmpty) {
+        _lokasiController.text = AIService.suggestLocation(predictedCat);
+      }
+    });
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -63,41 +72,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-          decoration: BoxDecoration(
-            color: isDark ? AppTheme.slate800 : Colors.white,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 40,
-                offset: const Offset(0, -8),
-              ),
-            ],
-          ),
+          decoration: BoxDecoration(color: isDark ? AppTheme.slate800 : Colors.white, borderRadius: BorderRadius.circular(32)),
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 24),
-                  decoration: BoxDecoration(
-                    color: AppTheme.slate400.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              Text(
-                'Sumber Foto',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : AppTheme.slate900,
-                  letterSpacing: -0.5,
-                ),
-              ),
+              Container(width: 44, height: 4, margin: const EdgeInsets.only(bottom: 24), decoration: BoxDecoration(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(2))),
+              Text('Sumber Foto', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: isDark ? Colors.white : AppTheme.slate900)),
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -108,7 +89,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               ),
               if (_imagePath != null) ...[
                 const SizedBox(height: 12),
-                _buildPhotoOption(icon: Icons.delete_outline_rounded, label: 'Hapus Foto', color: Colors.redAccent, onTap: () { setState(() => _imagePath = null); Navigator.pop(context); }, fullWidth: true),
+                _buildPhotoOption(icon: Icons.delete_outline_rounded, label: 'Hapus Foto', color: Colors.redAccent, onTap: () { setState(() => _imagePath = null); Navigator.pop(context); }),
               ],
             ],
           ),
@@ -117,36 +98,26 @@ class _AddItemScreenState extends State<AddItemScreen> {
     );
   }
 
-  Widget _buildPhotoOption({required IconData icon, required String label, required Color color, required VoidCallback onTap, bool fullWidth = false}) {
+  Widget _buildPhotoOption({required IconData icon, required String label, required Color color, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 18),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
-        ),
+        decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(width: 10),
-            Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 15)),
-          ],
+          children: [Icon(icon, color: color, size: 22), const SizedBox(width: 10), Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 15))],
         ),
       ),
     );
   }
 
   Future<void> _saveItem() async {
-    if (!_formKey.currentState!.validate()) {
+    if (!(_formKey.currentState?.validate() ?? false)) {
       HapticFeedback.vibrate();
       return;
     }
-    HapticFeedback.mediumImpact();
     setState(() => _isSaving = true);
-
     try {
       final item = ItemModel(
         namaBarang: _namaController.text.trim(),
@@ -155,78 +126,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
         kategori: _selectedCategory,
         catatan: _catatanController.text.trim().isNotEmpty ? _catatanController.text.trim() : null,
         barcode: _barcodeController.text.trim().isNotEmpty ? _barcodeController.text.trim() : null,
-        peminjam: _peminjamController.text.trim().isNotEmpty ? _peminjamController.text.trim() : null,
-        tglPinjam: _tglPinjam,
-        tglKembali: _tglKembali,
         garansiHabis: _garansiHabis,
         tglKadaluarsa: _tglKadaluarsa,
       );
       await context.read<ItemController>().addItem(item);
-      if (mounted) {
-        HapticFeedback.lightImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle_rounded, color: Colors.white),
-                SizedBox(width: 10),
-                Text('Barang ditambahkan!', style: TextStyle(fontWeight: FontWeight.bold)),
-              ],
-            ),
-            backgroundColor: AppTheme.emerald,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          ),
-        );
-        Navigator.pop(context, true);
-      }
+      if (mounted) Navigator.pop(context, true);
     } catch (e) {
-      if (mounted) {
-        setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.redAccent),
-        );
-      }
-    }
-  }
-
-  Future<void> _scanBarcode() async {
-    HapticFeedback.mediumImpact();
-    final result = await ScannerService.scanBarcode(context);
-    if (result != null) {
-      setState(() {
-        _barcodeController.text = result;
-      });
-    }
-  }
-
-  Future<void> _selectDate(BuildContext context, String type) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppTheme.emerald,
-              onPrimary: Colors.white,
-              onSurface: AppTheme.slate800,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        if (type == 'garansi') _garansiHabis = picked;
-        if (type == 'kadaluarsa') _tglKadaluarsa = picked;
-        if (type == 'pinjam') _tglPinjam = picked;
-        if (type == 'kembali') _tglKembali = picked;
-      });
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
@@ -235,695 +141,219 @@ class _AddItemScreenState extends State<AddItemScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.slate900 : const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isDark ? AppTheme.slate800 : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
-            ),
-            child: Icon(Icons.arrow_back_rounded, color: isDark ? Colors.white : AppTheme.slate900, size: 20),
-          ),
-        ),
-        title: Text(
-          'Tambah Barang',
-          style: TextStyle(
-            fontWeight: FontWeight.w800,
-            fontSize: 18,
-            color: isDark ? Colors.white : AppTheme.slate900,
-            letterSpacing: -0.5,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      backgroundColor: isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
+      appBar: _buildAppBar(isDark),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          physics: const BouncingScrollPhysics(),
           children: [
-            // Image Picker
             _buildImageSection(isDark),
-            const SizedBox(height: 20),
-
-            // Form Card
-            _buildFormCard(isDark),
-            const SizedBox(height: 16),
-
-            // Barcode Card
-            _buildBarcodeCard(isDark),
-            const SizedBox(height: 16),
-
-            // Lending Tracker
-            _buildLendingCard(isDark),
-            const SizedBox(height: 16),
-
-            // Warranty & Expiry
-            _buildAlertsCard(isDark),
-            const SizedBox(height: 16),
-
-            // Category
-            _buildCategoryCard(isDark),
             const SizedBox(height: 32),
-
-            // Save Button
+            _buildCardHeader('INFORMASI DETAIL', isDark),
+            _buildMainSection(isDark),
+            const SizedBox(height: 32),
+            _buildCardHeader('SISTEM & MASA BERLAKU', isDark),
+            _buildAdvancedSection(isDark),
+            const SizedBox(height: 48),
             _buildSaveButton(isDark),
+            const SizedBox(height: 40),
           ],
         ),
       ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(bool isDark) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      leading: IconButton(icon: Icon(Icons.close_rounded, color: isDark ? Colors.white : AppTheme.slate900), onPressed: () => Navigator.pop(context)),
+      title: Text('CATAT BARANG BARU', style: TextStyle(color: isDark ? Colors.white : AppTheme.slate900, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.5)),
     );
   }
 
   Widget _buildImageSection(bool isDark) {
     return GestureDetector(
       onTap: _showImageSourceDialog,
-      child: Container(
-        height: 220,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          color: isDark ? AppTheme.slate800 : Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.emerald.withValues(alpha: _imagePath != null ? 0.15 : 0.06),
-              blurRadius: 24,
-              offset: const Offset(0, 6),
-            ),
-          ],
-          image: _imagePath != null
-              ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover)
-              : null,
-          border: Border.all(
-            color: _imagePath != null ? AppTheme.emerald.withValues(alpha: 0.4) : AppTheme.emerald.withValues(alpha: 0.12),
-            width: 2,
+      child: Center(
+        child: Container(
+          width: 150, height: 150,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(48),
+            border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), width: 2),
+            image: _imagePath != null ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover) : null,
           ),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(26),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (_imagePath == null)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppTheme.emerald.withValues(alpha: 0.08),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.add_a_photo_outlined, size: 36, color: AppTheme.emerald.withValues(alpha: 0.7)),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Tap untuk tambah foto',
-                      style: TextStyle(
-                        color: isDark ? AppTheme.slate400 : AppTheme.slate500,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Kamera atau Galeri',
-                      style: TextStyle(
-                        color: (isDark ? AppTheme.slate400 : AppTheme.slate500).withValues(alpha: 0.6),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              // Always show edit overlay bottom-right
-              Positioned(
-                bottom: 14,
-                right: 14,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: _imagePath != null ? Colors.black.withValues(alpha: 0.5) : AppTheme.emerald.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: _imagePath != null ? Colors.white.withValues(alpha: 0.2) : AppTheme.emerald.withValues(alpha: 0.2)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _imagePath != null ? Icons.edit_rounded : Icons.camera_alt_rounded,
-                        size: 14,
-                        color: _imagePath != null ? Colors.white : AppTheme.emerald,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        _imagePath != null ? 'Ganti' : 'Pilih',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: _imagePath != null ? Colors.white : AppTheme.emerald,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: _imagePath == null ? Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 40) : null,
         ),
       ),
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0);
+    ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack);
   }
 
-  Widget _buildFormCard(bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.slate800 : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 20, offset: const Offset(0, 4))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Section Header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: Text(
-              'DETAIL BARANG',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.5,
-                color: AppTheme.emerald,
-              ),
-            ),
-          ),
-          // Nama Barang
-          _buildModernField(
-            controller: _namaController,
-            label: 'Nama Barang',
-            hint: 'Contoh: Kunci Cadangan, Charger...',
-            icon: Icons.inventory_2_outlined,
-            isDark: isDark,
-            isRequired: true,
-            validator: (v) => v?.trim().isEmpty ?? true ? 'Nama barang wajib diisi' : null,
-          ),
-          _buildDivider(isDark),
-          // Lokasi
-          _buildModernField(
-            controller: _lokasiController,
-            label: 'Lokasi Penyimpanan',
-            hint: 'Contoh: Laci Meja, Rak Buku...',
-            icon: Icons.place_outlined,
-            isDark: isDark,
-            isRequired: true,
-            validator: (v) => v?.trim().isEmpty ?? true ? 'Lokasi wajib diisi' : null,
-          ),
-          _buildDivider(isDark),
-          // Catatan
-          _buildModernField(
-            controller: _catatanController,
-            label: 'Catatan',
-            hint: 'Info tambahan tentang barang ini...',
-            icon: Icons.sticky_note_2_outlined,
-            isDark: isDark,
-            maxLines: 3,
-            isRequired: false,
-          ),
-          const SizedBox(height: 4),
-        ],
-      ),
-    ).animate().fadeIn(duration: 400.ms, delay: 50.ms).slideY(begin: 0.05, end: 0);
+  Widget _buildCardHeader(String title, bool isDark) {
+    return Padding(padding: const EdgeInsets.only(left: 4, bottom: 12), child: Text(title, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.4))));
   }
 
-  Widget _buildModernField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required IconData icon,
-    required bool isDark,
-    bool isRequired = false,
-    int maxLines = 1,
-    String? Function(String?)? validator,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 15, color: AppTheme.emerald),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? AppTheme.slate300 : AppTheme.slate600,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              if (isRequired) ...[
-                const SizedBox(width: 4),
-                Text('*', style: TextStyle(color: AppTheme.emerald, fontWeight: FontWeight.w900, fontSize: 14)),
-              ],
-            ],
-          ),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: controller,
-            maxLines: maxLines,
-            validator: validator,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-              color: isDark ? Colors.white : AppTheme.slate900,
-            ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.3),
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-              ),
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              focusedErrorBorder: InputBorder.none,
-              isDense: true,
-              contentPadding: EdgeInsets.zero,
-              errorStyle: TextStyle(color: Colors.redAccent, fontSize: 11),
-            ),
-          ),
-        ],
-      ),
+  Widget _buildMainSection(bool isDark) {
+    return Column(
+      children: [
+        _buildOutlinedField(
+          controller: _namaController, 
+          label: 'Nama Barang', 
+          hint: 'Contoh: Kunci Cadangan', 
+          icon: Icons.inventory_2_outlined, 
+          isDark: isDark,
+          validator: (v) => (v == null || v.isEmpty) ? 'Nama barang wajib diisi' : null,
+          suffix: IconButton(icon: const Icon(Icons.auto_awesome_rounded, size: 18, color: AppTheme.emerald), onPressed: _applyAISuggestion),
+        ),
+        const SizedBox(height: 16),
+        _buildOutlinedField(
+          controller: _lokasiController, 
+          label: 'Lokasi Simpan', 
+          hint: 'Di mana Anda menyimpannya?', 
+          icon: Icons.location_on_outlined, 
+          isDark: isDark,
+          validator: (v) => (v == null || v.isEmpty) ? 'Lokasi wajib diisi' : null,
+        ),
+        const SizedBox(height: 16),
+        _buildCategorySelector(isDark),
+        const SizedBox(height: 16),
+        _buildOutlinedField(controller: _catatanController, label: 'Catatan Singkat', hint: 'Tambahkan detail...', icon: Icons.description_outlined, isDark: isDark, maxLines: 3),
+      ],
     );
   }
 
-  Widget _buildDivider(bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Divider(
-        height: 1,
-        thickness: 1,
-        color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.06),
-      ),
+  Widget _buildAdvancedSection(bool isDark) {
+    return Column(
+      children: [
+        _buildOutlinedField(controller: _barcodeController, label: 'Barcode / QR', hint: 'Scan untuk mengisi...', icon: Icons.qr_code_2_rounded, isDark: isDark, suffix: IconButton(icon: const Icon(Icons.qr_code_scanner_rounded, size: 20, color: AppTheme.emerald), onPressed: () async { final res = await ScannerService.scanBarcode(context); if (res != null) setState(() => _barcodeController.text = res); })),
+        const SizedBox(height: 16),
+        _buildDateSelector('Masa Garansi', _garansiHabis, isDark, Icons.verified_user_outlined, () async {
+          final res = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime(2100));
+          if (res != null) setState(() => _garansiHabis = res);
+        }),
+        const SizedBox(height: 16),
+        _buildDateSelector('Kadaluarsa', _tglKadaluarsa, isDark, Icons.timer_outlined, () async {
+          final res = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime(2100));
+          if (res != null) setState(() => _tglKadaluarsa = res);
+        }),
+      ],
     );
   }
 
-  Widget _buildCategoryCard(bool isDark) {
-    final selectedCat = CategoryModel.allCategories.firstWhere(
-      (c) => c.name == _selectedCategory,
-      orElse: () => CategoryModel.allCategories.last,
-    );
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.slate800 : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 20, offset: const Offset(0, 4))],
-      ),
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.category_outlined, size: 15, color: AppTheme.emerald),
-              const SizedBox(width: 8),
-              Text(
-                'Kategori',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? AppTheme.slate300 : AppTheme.slate600,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              const SizedBox(width: 4),
-              const Text('*', style: TextStyle(color: AppTheme.emerald, fontWeight: FontWeight.w900, fontSize: 14)),
-            ],
+  Widget _buildOutlinedField({required TextEditingController controller, required String label, required String hint, required IconData icon, required bool isDark, Widget? suffix, int maxLines = 1, String? Function(String?)? validator}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(padding: const EdgeInsets.only(left: 4, bottom: 6), child: Text(label.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.emerald, letterSpacing: 1))),
+        TextFormField(
+          controller: controller,
+          maxLines: maxLines,
+          validator: validator,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: isDark ? Colors.white : AppTheme.slate900),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(fontSize: 14, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2)),
+            prefixIcon: Icon(icon, size: 20, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.3)),
+            suffixIcon: suffix,
+            filled: true,
+            fillColor: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.8),
+            contentPadding: const EdgeInsets.all(20),
+            errorStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.redAccent),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08))),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: AppTheme.emerald, width: 2)),
+            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.redAccent, width: 1.5)),
+            focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.redAccent, width: 2)),
           ),
-          const SizedBox(height: 12),
-          // Styled Dropdown
-          DropdownButtonHideUnderline(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-              decoration: BoxDecoration(
-                color: selectedCat.color.withValues(alpha: 0.07),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: selectedCat.color.withValues(alpha: 0.3), width: 1.5),
-              ),
-              child: DropdownButton<String>(
-                value: _selectedCategory,
-                isExpanded: true,
-                icon: Icon(Icons.keyboard_arrow_down_rounded, color: isDark ? AppTheme.slate400 : AppTheme.slate500),
-                dropdownColor: isDark ? AppTheme.slate800 : Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                elevation: 8,
-                selectedItemBuilder: (context) => CategoryModel.allCategories.map((cat) {
-                  return Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: cat.color.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(cat.icon, color: cat.color, size: 16),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          cat.name,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
-                            color: isDark ? Colors.white : AppTheme.slate900,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-                items: CategoryModel.allCategories.map((cat) {
-                  return DropdownMenuItem<String>(
-                    value: cat.name,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: cat.color.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(cat.icon, color: cat.color, size: 16),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            cat.name,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: isDark ? Colors.white : AppTheme.slate900,
-                            ),
-                          ),
-                        ),
-                        if (cat.name == _selectedCategory)
-                          Icon(Icons.check_rounded, color: AppTheme.emerald, size: 18),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    HapticFeedback.selectionClick();
-                    setState(() => _selectedCategory = value);
-                  }
-                },
-              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategorySelector(bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(padding: const EdgeInsets.only(left: 4, bottom: 6), child: Text('KATEGORI', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.emerald, letterSpacing: 1))),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.8),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08)),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedCategory,
+              isExpanded: true,
+              icon: const Icon(Icons.keyboard_arrow_down_rounded),
+              dropdownColor: isDark ? AppTheme.slate800 : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              items: CategoryModel.allCategories.map((c) => DropdownMenuItem(
+                value: c.name,
+                child: Row(children: [Icon(c.icon, size: 18, color: c.color), const SizedBox(width: 12), Text(c.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: isDark ? Colors.white : AppTheme.slate900))]),
+              )).toList(),
+              onChanged: (v) { if (v != null) setState(() => _selectedCategory = v); },
             ),
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 400.ms, delay: 100.ms).slideY(begin: 0.05, end: 0);
-  }
-
-  Widget _buildBarcodeCard(bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.slate800 : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 20, offset: const Offset(0, 4))],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.qr_code_scanner_rounded, size: 15, color: AppTheme.emerald),
-              const SizedBox(width: 8),
-              Text(
-                'BARCODE / QR',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.5,
-                  color: AppTheme.emerald,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _barcodeController,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: isDark ? Colors.white : AppTheme.slate900),
-                  decoration: InputDecoration(
-                    hintText: 'Scan atau ketik manual...',
-                    hintStyle: TextStyle(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.3), fontWeight: FontWeight.w400, fontSize: 14),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                    filled: true,
-                    fillColor: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.04),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: _scanBarcode,
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.emerald.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppTheme.emerald.withValues(alpha: 0.2)),
-                  ),
-                  child: Icon(Icons.center_focus_weak_rounded, color: AppTheme.emerald),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildLendingCard(bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.slate800 : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 20, offset: const Offset(0, 4))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: Row(
-              children: [
-                Icon(Icons.handshake_outlined, size: 15, color: AppTheme.cyberBlue),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'PELACAK PEMINJAMAN',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.5,
-                      color: AppTheme.cyberBlue,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          _buildModernField(
-            controller: _peminjamController,
-            label: 'Nama Peminjam',
-            hint: 'Siapa yang meminjam?',
-            icon: Icons.person_outline_rounded,
-            isDark: isDark,
-          ),
-          _buildDivider(isDark),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildDatePickerField(
-                    label: 'Tgl Pinjam',
-                    date: _tglPinjam,
-                    isDark: isDark,
-                    onTap: () => _selectDate(context, 'pinjam'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildDatePickerField(
-                    label: 'Tgl Kembali',
-                    date: _tglKembali,
-                    isDark: isDark,
-                    onTap: () => _selectDate(context, 'kembali'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAlertsCard(bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.slate800 : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 20, offset: const Offset(0, 4))],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.notifications_active_outlined, size: 15, color: Colors.orangeAccent),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'PENGINGAT (REMINDERS)',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.5,
-                    color: Colors.orangeAccent,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildDatePickerField(
-            label: 'Masa Garansi Habis',
-            date: _garansiHabis,
-            isDark: isDark,
-            onTap: () => _selectDate(context, 'garansi'),
-          ),
-          const SizedBox(height: 12),
-          _buildDatePickerField(
-            label: 'Tanggal Kadaluarsa',
-            date: _tglKadaluarsa,
-            isDark: isDark,
-            onTap: () => _selectDate(context, 'kadaluarsa'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDatePickerField({required String label, DateTime? date, required bool isDark, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: isDark ? AppTheme.slate400 : AppTheme.slate500),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+  Widget _buildDateSelector(String label, DateTime? date, bool isDark, IconData icon, VoidCallback onTap) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(padding: const EdgeInsets.only(left: 4, bottom: 6), child: Text(label.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.emerald, letterSpacing: 1))),
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.04),
-              borderRadius: BorderRadius.circular(12),
+              color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08)),
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_rounded, size: 14, color: isDark ? AppTheme.slate300 : AppTheme.slate600),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    date != null ? "${date.day}/${date.month}/${date.year}" : "Pilih Tanggal",
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: date != null ? FontWeight.w700 : FontWeight.w400,
-                      color: date != null ? (isDark ? Colors.white : AppTheme.slate900) : (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.3),
-                    ),
-                  ),
-                ),
+                Icon(icon, size: 20, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.3)),
+                const SizedBox(width: 16),
+                Text(date != null ? "${date.day}/${date.month}/${date.year}" : 'Ketuk untuk set tanggal', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: date != null ? (isDark ? Colors.white : AppTheme.slate900) : (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2))),
+                const Spacer(),
+                const Icon(Icons.calendar_month_rounded, size: 18, color: AppTheme.emerald),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildSaveButton(bool isDark) {
-    return GestureDetector(
-      onTap: _isSaving ? null : _saveItem,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 60,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: _isSaving
-                ? [AppTheme.emerald.withValues(alpha: 0.5), AppTheme.emerald.withValues(alpha: 0.5)]
-                : [AppTheme.emerald, const Color(0xFF059669)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+    return Container(
+      width: double.infinity,
+      height: 64,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), gradient: AppTheme.mintGradient, boxShadow: [BoxShadow(color: AppTheme.emerald.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))]),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isSaving ? null : _saveItem,
+          borderRadius: BorderRadius.circular(24),
+          child: Center(
+            child: _isSaving
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text('SIMPAN BARANG', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 1.5)),
           ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: _isSaving ? [] : [
-            BoxShadow(
-              color: AppTheme.emerald.withValues(alpha: 0.4),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Center(
-          child: _isSaving
-              ? const SizedBox(
-                  height: 22,
-                  width: 22,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
-                )
-              : const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.check_rounded, color: Colors.white, size: 22),
-                    SizedBox(width: 10),
-                    Text(
-                      'Simpan Barang',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                  ],
-                ),
         ),
       ),
-    ).animate().fadeIn(duration: 400.ms, delay: 150.ms).slideY(begin: 0.05, end: 0);
+    ).animate().fadeIn(duration: 600.ms, delay: 200.ms).slideY(begin: 0.1, end: 0);
   }
 }

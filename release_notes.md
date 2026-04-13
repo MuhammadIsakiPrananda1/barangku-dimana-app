@@ -1,41 +1,27 @@
-# 🚀 Release v1.2.0 - Performa & Produktivitas Pintar
+# 🚀 Release v1.3.0 - Sinkronisasi Sistem & Stabilitas
 
-Selamat datang di versi **1.2.0** dari **Barangku Dimana?**. Pembaruan kali ini berfokus pada dua hal utama: membuat aplikasi berjalan sangat ringan di semua jenis perangkat (*HP Kentang Friendly*) dan memberikan fitur produktivitas yang memberdayakan pengguna.
+Selamat datang di versi **1.3.0** dari **Barangku Dimana?**. Pembaruan kali ini berfokus pada sinkronisasi versi di seluruh ekosistem aplikasi dan pembersihan sisa-sisa kode dari versi sebelumnya untuk memastikan stabilitas maksimal.
 
 ---
 
 ## 🔥 Highlight Utama
 
-### ⚡ Performa Tanpa Batas ("HP Kentang" Friendly)
-Kami telah merombak total sistem antarmuka untuk memastikan kelancaran maksimal:
-- **GPU Optimization:** Menghapus penggunaan `BackdropFilter` (Blur) yang menyerap banyak daya kartu grafis.
-- **Shadow Refinement:** Menyederhanakan kompleksitas bayangan (*shadows*) di seluruh aplikasi untuk mempercepat proses *rendering*.
-- **Efficient Animations:** Animasi transisi yang berat digantikan dengan efek `Fade` yang lebih ringan namun tetap terasa premium.
+### 🔧 Sinkronisasi Versi Global
+Kami telah memastikan semua komponen aplikasi menggunakan identitas yang sama:
+- **Consistency:** Versi `1.3.0` kini tercermin di Splash Screen, Dashboard, Gradle Build, dan Pubspec.
+- **Clean Registry:** Pembersihan metadata versi lama untuk menghindari kebingungan sistem.
 
-### 📊 Pusat Wawasan (Insights Dashboard)
-Pantau inventaris Anda secara sekilas melalui dashboard baru di halaman utama:
-- **Status Pinjam:** Ketahui berapa banyak barang yang sedang tidak ada di tempat.
-- **Peringatan Penting:** Deteksi dini barang yang mendekati masa kadaluarsa atau garansi habis.
-
-### 📄 Ekspor Laporan PDF Profesional
-Butuh daftar inventaris fisik? Sekarang Anda bisa membuat laporan PDF format A4 yang rapi langsung dari aplikasi. Sangat berguna untuk arsip pribadi atau daftar pindahan.
-
-### 🔔 Notifikasi Pintar 7 Hari
-Jangan biarkan garansi terbuang percuma! Aplikasi sekarang akan mengingatkan Anda **7 hari sebelum** masa garansi atau kadaluarsa berakhir.
-
-### 🎨 Ikon Modern (Material Outline)
-Tampilan aplikasi diperbarui dengan menggunakan Ikon Outline yang lebih bersih, profesional, dan kohesif di seluruh layar.
+### ⚡ Performa Tetap Ringan
+Meneruskan komitmen "HP Kentang Friendly" dari versi sebelumnya:
+- **Optimization:** Memastikan optimasi GPU dan memori dari v1.2.0 tetap berjalan optimal di core baru v1.3.0.
 
 ---
 
 ## 🛠️ Daftar Perubahan Lengkap
 
-- **[ADD]** 5 Kategori Baru: Dapur, Kantor, Koleksi, Olahraga, Perhiasan.
-- **[ADD]** Dashboard Statistik di layar utama.
-- **[ADD]** Fitur "Ekspor Laporan PDF" untuk inventaris.
-- **[ADD]** Sistem Notifikasi Pengingat (Warranty & Expiry).
-- **[UPDATE]** Migrasi dari Emoji ke Ikon Outline di seluruh kategori.
-- **[UPDATE]** Sinkronisasi versi 1.2.0 pada semua komponen sistem.
+- **[UPDATE]** Sinkronisasi versi 1.3.0 pada semua komponen sistem.
+- **[UPDATE]** Pembersihan UI watermark di Home Screen.
+- **[FIX]** Konsistensi penamaan versi pada Splash Screen.
 - **[FIX]** Optimasi penggunaan memori dan GPU pada layar utama.
 
 ---

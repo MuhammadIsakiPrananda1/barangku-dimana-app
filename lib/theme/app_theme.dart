@@ -43,6 +43,12 @@ class AppTheme {
         end: Alignment.bottomRight,
       );
 
+  static LinearGradient get cyberGradient => const LinearGradient(
+        colors: [cyberBlue, neonPurple],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
+
   // --- Card Surfaces ---
   static BoxDecoration surfaceCard({double radius = 24}) {
     return BoxDecoration(
