@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/username/barangku-dimana/main/.github/assets/banner_new.png" alt="Barangku Dimana Banner" width="100%">
+  <img src="https://raw.githubusercontent.com/MuhammadIsakiPrananda1/barangku-dimana-app/main/.github/assets/banner_new.png" alt="Barangku Dimana Banner" width="100%">
   
   <h1>🚀 Release v1.3.0 - Premium Modernization</h1>
   
@@ -41,5 +41,3 @@ Silakan unduh APK yang sesuai dengan arsitektur perangkat Anda:
 
 ## 🤝 Kontribusi & Dukungan
 Terima kasih telah menggunakan **Barangku Dimana**. Jika Anda menemukan bug atau memiliki ide fitur keren, silakan buka *Issue* di repositori kami.
-
-**Dibuat dengan ❤️ oleh Neverland Studio.**
