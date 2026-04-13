@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/MuhammadIsakiPrananda1/barangku-dimana-app/main/.github/assets/banner_v120.png" alt="Barangku Dimana Banner v1.2.0" width="100%">
+  <img src="https://raw.githubusercontent.com/MuhammadIsakiPrananda1/barangku-dimana-app/main/.github/assets/banner_new.png" alt="Barangku Dimana Banner" width="100%">
   
   <h1>📊 Release v1.2.0 - Insights & Optimization</h1>
   
