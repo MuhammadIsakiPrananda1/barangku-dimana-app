@@ -104,6 +104,6 @@ Proyek ini menggunakan lisensi **MIT** - lihat file [LICENSE](LICENSE) untuk inf
 
 ---
 <div align="center">
-  <p>Dibuat dengan penuh ketelitian oleh <b>Neverland Studio</b></p>
+  <p>Dibuat dengan penuh ketelitian oleh <b>Muhammad Isaki Prananda</b></p>
   <img src="assets/images/logo_barangku.svg" width="40" alt="Logo">
 </div>

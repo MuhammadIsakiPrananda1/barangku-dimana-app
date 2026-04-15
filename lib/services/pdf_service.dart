@@ -129,7 +129,7 @@ class PdfService {
         pw.Divider(color: PdfColors.grey300),
         pw.SizedBox(height: 8),
         pw.Text(
-          'Dibuat secara otomatis oleh Aplikasi Barangku Dimana? - Neverland Studio',
+          'Dibuat secara otomatis oleh Aplikasi Barangku Dimana? - Muhammad Isaki Prananda',
           style: pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
         ),
       ],
