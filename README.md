@@ -9,7 +9,7 @@
 
   <p align="center">
     <a href="https://github.com/MuhammadIsakiPrananda1/barangku-dimana-app/releases/latest">
-      <img src="https://img.shields.io/badge/Release-v1.3.0--Stable-0F172A?style=for-the-badge&logo=github&logoColor=white" alt="Latest Release">
+      <img src="https://img.shields.io/badge/Release-v1.3.0-0F172A?style=for-the-badge&logo=github&logoColor=white" alt="Latest Release">
     </a>
     <a href="https://flutter.dev">
       <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
@@ -23,15 +23,16 @@
   </p>
 
   <p align="center">
-    <img src="https://img.shields.io/github/repo-size/MuhammadIsakiPrananda1/barangku-dimana-app?style=for-the-badge&color=2ecc71" alt="Repo Size">
-    <img src="https://img.shields.io/github/last-commit/MuhammadIsakiPrananda1/barangku-dimana-app?style=for-the-badge&color=3498db" alt="Last Commit">
-    <img src="https://img.shields.io/badge/Maintained%3F-yes-2ecc71?style=for-the-badge" alt="Maintained">
+    <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
+    <img src="https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS">
+    <img src="https://img.shields.io/badge/UI--Style-Zen--Minimalist-E74C3C?style=for-the-badge" alt="UI Style">
+    <img src="https://img.shields.io/badge/Dev-HP--Kentang-F39C12?style=for-the-badge" alt="Performance">
   </p>
 
   <p align="center">
-    <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-white?style=flat-square&logo=android&logoColor=black" alt="Platform Support">
-    <img src="https://img.shields.io/badge/UI%20Style-Zen%20Minimalist-E74C3C?style=flat-square" alt="UI Style">
-    <img src="https://img.shields.io/badge/Dev-HP%20Kentang%20Friendly-F39C12?style=flat-square" alt="Performance">
+    <img src="https://img.shields.io/github/repo-size/MuhammadIsakiPrananda1/barangku-dimana-app?style=for-the-badge&color=2ecc71" alt="Repo Size">
+    <img src="https://img.shields.io/github/last-commit/MuhammadIsakiPrananda1/barangku-dimana-app?style=for-the-badge&color=3498db" alt="Last Commit">
+    <img src="https://img.shields.io/badge/Maintained%3F-yes-2ecc71?style=for-the-badge" alt="Maintained">
   </p>
 </div>
 
