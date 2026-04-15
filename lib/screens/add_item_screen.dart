@@ -58,8 +58,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Future<void> _pickImage(ImageSource source) async {
     HapticFeedback.lightImpact();
     final path = await (source == ImageSource.camera
-        ? _imageService.pickImageFromCamera()
-        : _imageService.pickImageFromGallery());
+        ? _imageService.pickImageFromCamera(context)
+        : _imageService.pickImageFromGallery(context));
     if (path != null) setState(() => _imagePath = path);
   }
 
@@ -178,20 +178,28 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Widget _buildImageSection(bool isDark) {
     return GestureDetector(
       onTap: _showImageSourceDialog,
-      child: Center(
-        child: Container(
-          width: 150, height: 150,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(48),
-            border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), width: 2),
-            image: _imagePath != null ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover) : null,
-          ),
-          child: _imagePath == null ? Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 40) : null,
+      child: Container(
+        width: double.infinity,
+        height: 220,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), width: 2),
+          image: _imagePath != null ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover) : null,
         ),
+        child: _imagePath == null 
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 48),
+                const SizedBox(height: 12),
+                Text('TAMBAHKAN FOTO BARANG', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), letterSpacing: 1.5)),
+              ],
+            ) 
+          : null,
       ),
-    ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack);
+    );
   }
 
   Widget _buildCardHeader(String title, bool isDark) {
@@ -204,7 +212,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
         _buildOutlinedField(
           controller: _namaController, 
           label: 'Nama Barang', 
-          hint: 'Contoh: Kunci Cadangan', 
+          hint: 'Masukkan nama barang', 
           icon: Icons.inventory_2_outlined, 
           isDark: isDark,
           validator: (v) => (v == null || v.isEmpty) ? 'Nama barang wajib diisi' : null,
@@ -214,7 +222,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
         _buildOutlinedField(
           controller: _lokasiController, 
           label: 'Lokasi Simpan', 
-          hint: 'Di mana Anda menyimpannya?', 
+          hint: 'Masukkan lokasi penyimpanan', 
           icon: Icons.location_on_outlined, 
           isDark: isDark,
           validator: (v) => (v == null || v.isEmpty) ? 'Lokasi wajib diisi' : null,
@@ -222,7 +230,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
         const SizedBox(height: 16),
         _buildCategorySelector(isDark),
         const SizedBox(height: 16),
-        _buildOutlinedField(controller: _catatanController, label: 'Catatan Singkat', hint: 'Tambahkan detail...', icon: Icons.description_outlined, isDark: isDark, maxLines: 3),
+        _buildOutlinedField(controller: _catatanController, label: 'Catatan Singkat', hint: 'Masukkan catatan tambahan...', icon: Icons.description_outlined, isDark: isDark, maxLines: 3),
       ],
     );
   }
@@ -230,7 +238,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Widget _buildAdvancedSection(bool isDark) {
     return Column(
       children: [
-        _buildOutlinedField(controller: _barcodeController, label: 'Barcode / QR', hint: 'Scan untuk mengisi...', icon: Icons.qr_code_2_rounded, isDark: isDark, suffix: IconButton(icon: const Icon(Icons.qr_code_scanner_rounded, size: 20, color: AppTheme.emerald), onPressed: () async { final res = await ScannerService.scanBarcode(context); if (res != null) setState(() => _barcodeController.text = res); })),
+        _buildOutlinedField(controller: _barcodeController, label: 'Barcode / QR', hint: 'Masukkan atau scan barcode', icon: Icons.qr_code_2_rounded, isDark: isDark, suffix: IconButton(icon: const Icon(Icons.qr_code_scanner_rounded, size: 20, color: AppTheme.emerald), onPressed: () async { final res = await ScannerService.scanBarcode(context); if (res != null) setState(() => _barcodeController.text = res); })),
         const SizedBox(height: 16),
         _buildDateSelector('Masa Garansi', _garansiHabis, isDark, Icons.verified_user_outlined, () async {
           final res = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime(2100));
@@ -340,20 +348,25 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Widget _buildSaveButton(bool isDark) {
     return Container(
       width: double.infinity,
-      height: 64,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), gradient: AppTheme.mintGradient, boxShadow: [BoxShadow(color: AppTheme.emerald.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))]),
+      height: 60,
+      decoration: BoxDecoration(
+        color: AppTheme.emerald,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: _isSaving ? null : _saveItem,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
+          splashFactory: NoSplash.splashFactory,
+          highlightColor: Colors.transparent,
           child: Center(
             child: _isSaving
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Text('SIMPAN BARANG', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 1.5)),
+                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : const Text('SIMPAN BARANG', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15, letterSpacing: 1)),
           ),
         ),
       ),
-    ).animate().fadeIn(duration: 600.ms, delay: 200.ms).slideY(begin: 0.1, end: 0);
+    );
   }
 }

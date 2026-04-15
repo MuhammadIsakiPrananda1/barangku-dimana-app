@@ -1,82 +1,108 @@
 <div align="center">
-  <img src=".github/assets/banner_new.png" alt="Barangku Dimana Banner" width="100%">
+  <img src=".github/assets/promotional_banner.jpeg" alt="Barangku Dimana Banner" width="100%">
   
+  <br/>
+
   <p align="center">
-    <strong>Solusi cerdas untuk melacak, mengorganisir, dan menemukan barang berharga Anda dengan mudah.</strong>
+    <strong>Solusi Cerdas & Minimalis untuk Mengorganisir, Melacak, dan Menemukan Barang Anda.</strong>
   </p>
 
   <p align="center">
-    <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter"></a>
-    <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License"></a>
+    <a href="https://github.com/MuhammadIsakiPrananda1/barangku-dimana-app/releases/latest">
+      <img src="https://img.shields.io/badge/Release-v1.3.0--Stable-0F172A?style=for-the-badge&logo=github&logoColor=white" alt="Latest Release">
+    </a>
+    <a href="https://flutter.dev">
+      <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
+    </a>
+    <a href="https://dart.dev">
+      <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart">
+    </a>
+    <a href="LICENSE">
+      <img src="https://img.shields.io/badge/License-MIT-F1C40F?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="License">
+    </a>
+  </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/github/repo-size/MuhammadIsakiPrananda1/barangku-dimana-app?style=for-the-badge&color=2ecc71" alt="Repo Size">
+    <img src="https://img.shields.io/github/last-commit/MuhammadIsakiPrananda1/barangku-dimana-app?style=for-the-badge&color=3498db" alt="Last Commit">
+    <img src="https://img.shields.io/badge/Maintained%3F-yes-2ecc71?style=for-the-badge" alt="Maintained">
+  </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-white?style=flat-square&logo=android&logoColor=black" alt="Platform Support">
+    <img src="https://img.shields.io/badge/UI%20Style-Zen%20Minimalist-E74C3C?style=flat-square" alt="UI Style">
+    <img src="https://img.shields.io/badge/Dev-HP%20Kentang%20Friendly-F39C12?style=flat-square" alt="Performance">
   </p>
 </div>
 
 <br/>
 
-## 📖 Tentang Aplikasi
-**Barangku Dimana** adalah aplikasi asisten pribadi yang dirancang untuk mengatasi masalah klasik: lupa tempat menaruh barang. Baik itu kunci cadangan, dokumen penting, atau peralatan hobi yang jarang digunakan, aplikasi ini memastikan Anda tahu persis di mana setiap barang berada hanya dalam beberapa ketukan.
+## 🌟 Filosofi: "Lupakan Rasa Lupa"
+**Barangku Dimana** lahir dari kebutuhan sederhana namun krusial: mengakhiri frustrasi saat mencari barang yang "menghilang" di rumah atau kantor kita sendiri. Aplikasi ini bukan sekadar inventaris, melainkan asisten memori visual yang membantu Anda memetakan harta benda Anda dengan presisi.
 
-Dibangun dengan **Flutter**, aplikasi ini menawarkan performa yang mulus dan antarmuka modern yang sangan intuitif.
-
-<br/>
-
-## ✨ Fitur Unggulan
-Aplikasi ini dikemas dengan fitur-fitur premium untuk pengelolaan barang yang maksimal:
-
-- 💾 **Penyimpanan Lokal (SQLite)**: Data Anda sepenuhnya milik Anda. Disimpan secara lokal dan aman, dapat diakses kapan saja tanpa kuota internet.
-- 📸 **Visual Library**: Lampirkan foto barang langsung dari kamera atau galeri untuk mempermudah identifikasi visual.
-- 🎙️ **Voice Commands**: Malu mengetik? Gunakan fitur *Voice-to-Text* untuk memasukkan nama atau deskripsi barang dengan suara Anda.
-- 📊 **Insight & Statistik**: Visualisasi data barang Anda melalui bagan interaktif (FL Chart) untuk melihat distribusi kategori.
-- 📄 **Pelaporan Profesional**: Ekspor daftar inventaris Anda ke format **PDF** siap cetak atau file **CSV** untuk kebutuhan pendataan lebih lanjut.
-- 🔍 **Smart Scanner**: Dukungan pemindaian QR Code dan Barcode untuk melabeli atau mencari barang secara instan.
-- 🔔 **Pengingat Cerdas**: Sistem notifikasi lokal untuk mengingatkan Anda tentang peminjaman barang atau jadwal pembersihan.
+Di versi **1.3.0 (Zen Mode Update)**, kami merombak total pengalaman pengguna. Kami menghapus distraksi visual untuk memberikan fokus penuh pada fungsi pencarian dan pendataan.
 
 <br/>
 
-## 🛠️ Teknologi yang Digunakan
-Proyek ini menggunakan stack teknologi modern untuk menjamin stabilitas dan kecepatan:
-- **Framework**: [Flutter](https://flutter.dev/) (SDK Versi Terbaru)
-- **Database**: [sqflite](https://pub.dev/packages/sqflite) - Database relasional lokal yang tangguh.
-- **State Management**: [Provider](https://pub.dev/packages/provider) - Untuk alur data yang bersih dan reaktif.
-- **Animations**: `flutter_animate` & `shimmer` untuk pengalaman UI yang premium.
-- **Charts**: `fl_chart` untuk visualisasi data yang memukau.
+## ✨ Fitur Premium
+Aplikasi ini dikembangkan dengan fokus pada kecepatan dan kemudahan penggunaan:
+
+- 🧘 **Zen Minimalist UI**: Antarmuka bersih tanpa bayangan (shadow) dan gradasi yang mengganggu. Fokus pada konten dan kecepatan akses.
+- 💾 **Safe Local Storage**: Menggunakan SQLite berperforma tinggi. Data Anda 100% aman dan privat di perangkat Anda sendiri.
+- 📸 **Visual Inventory**: Lampirkan foto untuk setiap barang. Karena terkadang, satu gambar bercerita lebih banyak dari seribu kata.
+- 🎙️ **Voice Command Entry**: Masukkan deskripsi barang lebih cepat menggunakan perintah suara terintegrasi.
+- 📊 **Smart Insight Dashboard**: Pantau statistik barang, kategori paling populer, hingga status peminjaman dalam satu layar intuitif.
+- 📄 **Professional Reporting**: Ekspor seluruh inventaris ke format **PDF (A4 Ready)** atau **CSV** untuk manajemen data tingkat lanjut.
+- 🔍 **Instant QR/Barcode Scanner**: Temukan barang secara instan dengan memindai label QR/Barcode yang Anda tempelkan pada kotak penyimpanan.
+- 🔔 **Intelligent Reminders**: Notifikasi pintar untuk garansi barang atau pengingat pengembalian barang yang dipinjam.
+- ⚡ **Ultra Lightweight**: Dioptimalkan secara khusus untuk perangkat dengan spesifikasi rendah (HP Kentang Friendly V2) dengan penggunaan GPU minimal.
+
+<br/>
+
+## 🛠️ Stack Teknologi & Arsitektur
+Dibuat dengan teknologi mutakhir untuk menjamin keandalan jangka panjang:
+- **Core Engine**: [Flutter 3.x](https://flutter.dev/) & [Dart](https://dart.dev/)
+- **Database**: [SQLite (sqflite)](https://pub.dev/packages/sqflite) - Relational Data Management.
+- **State Management**: [Provider](https://pub.dev/packages/provider) - Reactive & Predictable.
+- **Charts Engine**: `fl_chart` untuk visualisasi data interaktif.
+- **Reporting**: `pdf` & `printing` untuk generator dokumen lokal.
+- **Scanner**: `mobile_scanner` untuk pemindaian responsif.
 
 <br/>
 
 ## 🚀 Panduan Penggunaan
-Bagaimana cara memulai dengan Barangku Dimana?
-
-1. **Tambahkan Inventaris**: Klik tombol tambah (`+`), ambil foto barang, berikan nama, dan tuliskan lokasi penyimpanannya (misal: "Kotak Perkakas A" atau "Lemari Pakaian Baris 2").
-2. **Gunakan Pencarian**: Saat Anda butuh barang tersebut, cukup ketik namanya di kolom pencarian. Aplikasi akan menunjukkan detail lokasinya.
-3. **Scan Barcode**: Jika Anda memiliki banyak barang serupa, tempelkan label QR/Barcode dan gunakan scanner dalam aplikasi untuk pengecekan cepat.
-4. **Cetak Laporan**: Jika Anda ingin melakukan "Stock Opname" rumah atau kantor, gunakan fitur ekspor PDF untuk mendapatkan daftar inventaris yang rapi.
+1. **Tambah Barang**: Tekan tombol `+`, foto barangnya, beri nama, dan tentukan lokasinya (contoh: "Lemari Hallway - Rak Atas").
+2. **Gunakan Pencarian**: Ketik kata kunci di bar pencarian. Lokasi tepat akan muncul seketika.
+3. **Scan untuk Mencari**: Cetak label QR, tempel di kotak. Cukup scan kotak tersebut untuk mengetahui isi di dalamnya tanpa membukanya.
+4. **Export Laporan**: Gunakan menu export untuk mencetak daftar aset rumah/kantor Anda.
 
 <br/>
 
-## 💻 Instalasi (Developer)
-Jika Anda ingin menjalankan atau berkontribusi pada pengembangan aplikasi ini:
+## 💻 Panduan Instalasi (Development)
+Ingin mengembangkan aplikasi ini lebih lanjut?
+```bash
+# 1. Clone repository
+git clone https://github.com/MuhammadIsakiPrananda1/barangku-dimana-app.git
 
-1. **Clone Repository**:
-   ```bash
-   git clone https://github.com/username/barangku-dimana.git
-   ```
-2. **Setup Flutter**: Pastikan Flutter SDK `>=3.0.0` sudah terpasang di mesin Anda.
-3. **Get Dependencies**:
-   ```bash
-   flutter pub get
-   ```
-4. **Run Application**:
-   ```bash
-   flutter run
-   ```
+# 2. Masuk ke direktori
+cd barangku-dimana-app
+
+# 3. Ambil dependencies
+flutter pub get
+
+# 4. Jalankan aplikasi
+flutter run
+```
 
 <br/>
 
 ## 🤝 Kontribusi & Lisensi
-Kontribusi sangat terbuka bagi siapa saja! Silakan lihat [CONTRIBUTING.md](CONTRIBUTING.md) untuk detail lebih lanjut. Proyek ini dilisensikan di bawah **MIT License**.
+Kontribusi dalam bentuk *bug report*, *feature request*, atau *pull request* sangat dihargai. Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk detailnya.
+
+Proyek ini menggunakan lisensi **MIT** - lihat file [LICENSE](LICENSE) untuk informasi lebih lanjut.
 
 ---
 <div align="center">
-  Dibuat dengan ❤️ oleh <b>Neverland Studio</b>.
+  <p>Dibuat dengan penuh ketelitian oleh <b>Neverland Studio</b></p>
+  <img src="assets/images/logo_barangku.svg" width="40" alt="Logo">
 </div>

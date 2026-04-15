@@ -115,10 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (result == true) controller.loadItems();
                             },
                             onFavoriteToggle: (isFav) => controller.toggleFavorite(item, isFav),
-                          )
-                          .animate()
-                          .fadeIn(delay: (index * 50).ms)
-                          .slideX(begin: 0.1, end: 0),
+                          ),
                         );
                       },
                       childCount: controller.filteredItems.length,

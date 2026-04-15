@@ -1,14 +1,20 @@
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'permission_service.dart';
 
 class ImageService {
   final ImagePicker _picker = ImagePicker();
 
-  // Pick image from camera
-  Future<String?> pickImageFromCamera() async {
+  // Pick image from camera with permission check
+  Future<String?> pickImageFromCamera(BuildContext context) async {
     try {
+      final bool granted = await PermissionService.handleCameraPermission(context);
+      if (!granted) return null;
+
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 1024,
@@ -21,14 +27,18 @@ class ImageService {
       }
       return null;
     } catch (e) {
-      print('Error picking image from camera: $e');
+      debugPrint('Error picking image from camera: $e');
       return null;
     }
   }
 
-  // Pick image from gallery
-  Future<String?> pickImageFromGallery() async {
+  // Pick image from gallery with permission check
+  Future<String?> pickImageFromGallery(BuildContext context) async {
     try {
+      final bool granted = await PermissionService.handleGalleryPermission(context);
+      
+      if (!granted) return null;
+
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1024,
@@ -41,10 +51,11 @@ class ImageService {
       }
       return null;
     } catch (e) {
-      print('Error picking image from gallery: $e');
+      debugPrint('Error picking image from gallery: $e');
       return null;
     }
   }
+
 
   // Save image to app directory
   Future<String> _saveImage(XFile image) async {

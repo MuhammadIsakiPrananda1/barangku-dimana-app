@@ -31,16 +31,9 @@ class ItemCard extends StatelessWidget {
         color: isDark ? AppTheme.slate800.withValues(alpha: 0.4) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: (isDark ? Colors.white : AppTheme.emerald).withValues(alpha: 0.08),
-          width: 1.5,
+          color: (isDark ? Colors.white : AppTheme.emerald).withValues(alpha: 0.1),
+          width: 0.8,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
@@ -51,6 +44,8 @@ class ItemCard extends StatelessWidget {
               HapticFeedback.lightImpact();
               onTap();
             },
+            splashFactory: NoSplash.splashFactory,
+            highlightColor: Colors.transparent,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -61,7 +56,7 @@ class ItemCard extends StatelessWidget {
           ),
         ),
       ),
-    ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutBack);
+    );
   }
 
   Widget _buildImageSection(Color categoryColor, bool isDark) {
@@ -81,23 +76,7 @@ class ItemCard extends StatelessWidget {
                   : _buildPlaceholder(categoryColor),
             ),
           ),
-          // Gradient Overlay for bottom text readability if needed
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.1),
-                    Colors.transparent,
-                    Colors.black.withValues(alpha: 0.2),
-                  ],
-                  stops: const [0.0, 0.5, 1.0],
-                ),
-              ),
-            ),
-          ),
+
           // Floating Favorite Button
           Positioned(
             top: 12,
@@ -131,12 +110,6 @@ class ItemCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: categoryColor.withValues(alpha: 0.85),
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 4,
-                  ),
-                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

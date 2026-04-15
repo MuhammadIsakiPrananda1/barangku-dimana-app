@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
 
@@ -12,11 +13,23 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  String _version = "";
+
   @override
   void initState() {
     super.initState();
+    _initPackageInfo();
     _navigateToHome();
     _setSystemUI();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _version = info.version;
+      });
+    }
   }
 
   void _setSystemUI() {
@@ -49,37 +62,19 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Subtle clean background accents
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.emerald.withValues(alpha: 0.03),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildTidyLogo(),
-                  const SizedBox(height: 48),
-                  _buildTidyText(),
-                  const SizedBox(height: 100),
-                  _buildTidyLoading(),
                 ],
               ),
             ),
           ),
 
-          // Studio Watermark
-          _buildTidyWatermark(),
+          // Loading & Footer
+          _buildTidyFooter(),
         ],
       ),
     );
@@ -87,112 +82,84 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Widget _buildTidyLogo() {
     return Container(
-      width: 180,
-      height: 180,
+      width: 160,
+      height: 160,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(48), // Rounded corners for the shadow/clip
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 30,
-            offset: const Offset(0, 10),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 40,
+            offset: const Offset(0, 15),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Image.asset(
-            'assets/images/app_icon.png',
-            fit: BoxFit.contain, // Ensures nothing is cut off
-          ),
+        borderRadius: BorderRadius.circular(48),
+        child: Image.asset(
+          'assets/images/app_icon.png',
+          fit: BoxFit.cover,
         ),
       ),
     )
     .animate()
-    .fadeIn(duration: 800.ms)
-    .scale(begin: const Offset(0.9, 0.9), curve: Curves.easeOutBack);
+    .fadeIn(duration: 1200.ms, curve: Curves.easeOut)
+    .scale(begin: const Offset(0.8, 0.8), duration: 1000.ms, curve: Curves.easeOutBack)
+    .shimmer(delay: 2000.ms, duration: 2000.ms, color: Colors.white.withValues(alpha: 0.4));
   }
 
-  Widget _buildTidyText() {
-    return Column(
-      children: [
-        Text(
-          'Barangku Dimana?',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-            color: AppTheme.slate900,
-            letterSpacing: -0.5,
-          ),
-        )
-        .animate()
-        .fadeIn(delay: 400.ms)
-        .slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
-        
-        const SizedBox(height: 12),
-        
-        Container(
-          width: 40,
-          height: 3,
-          decoration: BoxDecoration(
-            color: AppTheme.emerald.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(2),
-          ),
-        )
-        .animate()
-        .scaleX(begin: 0, end: 1, delay: 800.ms, duration: 600.ms),
-      ],
-    );
-  }
-
-  Widget _buildTidyLoading() {
-    return SizedBox(
-      width: 120,
-      child: LinearProgressIndicator(
-        backgroundColor: Colors.black.withValues(alpha: 0.05),
-        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.emerald.withValues(alpha: 0.3)),
-        minHeight: 2,
-      ),
-    )
-    .animate()
-    .fadeIn(delay: 1000.ms);
-  }
-
-  Widget _buildTidyWatermark() {
+  Widget _buildTidyFooter() {
     return Positioned(
-      bottom: 60,
+      bottom: 50,
       left: 0,
       right: 0,
       child: Center(
         child: Column(
           children: [
+            // Aesthetic Minimalist Loading
+            SizedBox(
+              width: 100,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: LinearProgressIndicator(
+                  backgroundColor: AppTheme.emerald.withValues(alpha: 0.05),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.emerald.withValues(alpha: 0.2)),
+                  minHeight: 2,
+                ),
+              ),
+            )
+            .animate()
+            .fadeIn(delay: 1500.ms, duration: 800.ms)
+            .scaleX(begin: 0.5, curve: Curves.easeOut),
+            
+            const SizedBox(height: 32),
+            
             Text(
               'NEVERLAND STUDIO',
               style: TextStyle(
-                color: AppTheme.slate900.withValues(alpha: 0.15),
+                color: AppTheme.slate900.withValues(alpha: 0.2),
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              'CLEAN MINIMALIST EDITION',
-              style: TextStyle(
-                color: AppTheme.emerald.withValues(alpha: 0.25),
-                fontSize: 8,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1,
+            if (_version.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'V $_version',
+                style: TextStyle(
+                  color: AppTheme.emerald.withValues(alpha: 0.3),
+                  fontSize: 9,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
     )
-    .animate(delay: 1200.ms)
-    .fadeIn();
+    .animate(delay: 1000.ms)
+    .fadeIn(duration: 1200.ms);
   }
 }

@@ -5,10 +5,18 @@ Semua perubahan penting pada proyek ini akan didokumentasikan dalam file ini.
 Format penulisan didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 dan proyek ini mengikuti [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.0] - 2026-04-13
+## [1.3.0] - 2026-04-14
 
 ### Diperbarui
-- Sinkronisasi versi aplikasi menjadi 1.3.0 di semua komponen sistem (Splash, Home, Gradle, Pubspec).
+- **Minimalist UI Overhaul (Zen Mode):** Transformasi total antarmuka menjadi desain *flat* yang bersih dan modern.
+  - Menghapus semua bayangan (*shadow*) pada kartu barang dan tombol untuk estetika premium.
+  - Menghapus gradasi warna pada elemen utama untuk kejelasan visual maksimal.
+  - Memperhalus garis tepi (*border*) menjadi lebih tipis dan elegan.
+- **Optimasi Interaksi & Kecepatan:** 
+  - Menghapus semua animasi transisi yang memperlambat alur kerja (Daftar barang & transisi tombol).
+  - Menghapus efek *ripple/splash* pada tombol dan kartu untuk respon instan.
+- **HP Kentang Friendly V2:** Optimasi GPU lebih lanjut dengan menghapus efek visual berat, membuat aplikasi terasa sangat ringan di perangkat apapun.
+- Sinkronisasi versi aplikasi menjadi 1.3.0 di seluruh komponen sistem.
 
 ## [1.2.0] - 2026-04-07
 
