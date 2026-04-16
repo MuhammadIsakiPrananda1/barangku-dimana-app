@@ -9,7 +9,7 @@
 
   <p align="center">
     <a href="https://github.com/MuhammadIsakiPrananda1/barangku-dimana-app/releases/latest">
-      <img src="https://img.shields.io/badge/Release-v1.3.0-0F172A?style=for-the-badge&logo=github&logoColor=white" alt="Latest Release">
+      <img src="https://img.shields.io/badge/Release-v1.4.0-0F172A?style=for-the-badge&logo=github&logoColor=white" alt="Latest Release">
     </a>
     <a href="https://flutter.dev">
       <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
@@ -41,7 +41,7 @@
 ## 🌟 Filosofi: "Lupakan Rasa Lupa"
 **Barangku Dimana** lahir dari kebutuhan sederhana namun krusial: mengakhiri frustrasi saat mencari barang yang "menghilang" di rumah atau kantor kita sendiri. Aplikasi ini bukan sekadar inventaris, melainkan asisten memori visual yang membantu Anda memetakan harta benda Anda dengan presisi.
 
-Di versi **1.3.0 (Zen Mode Update)**, kami merombak total pengalaman pengguna. Kami menghapus distraksi visual untuk memberikan fokus penuh pada fungsi pencarian dan pendataan.
+Di versi **1.4.0 (Zen Mode Update)**, kami merombak total pengalaman pengguna. Kami menghapus distraksi visual untuk memberikan fokus penuh pada fungsi pencarian dan pendataan.
 
 <br/>
 

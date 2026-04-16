@@ -16,7 +16,6 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ItemController()),
-        // Theme Service could be a provider too, but we use ValueNotifier for now
       ],
       child: const MyApp(),
     ),

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
@@ -170,8 +171,19 @@ class _AddItemScreenState extends State<AddItemScreen> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      leading: IconButton(icon: Icon(Icons.close_rounded, color: isDark ? Colors.white : AppTheme.slate900), onPressed: () => Navigator.pop(context)),
-      title: Text('CATAT BARANG BARU', style: TextStyle(color: isDark ? Colors.white : AppTheme.slate900, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.5)),
+      leading: IconButton(
+        icon: Icon(Icons.close_rounded, color: isDark ? Colors.white : AppTheme.slate900),
+        onPressed: () => Navigator.pop(context),
+      ),
+      title: Text(
+        'CATAT BARANG BARU',
+        style: TextStyle(
+          color: isDark ? Colors.white : AppTheme.slate900,
+          fontWeight: FontWeight.w800,
+          fontSize: 13,
+          letterSpacing: 2,
+        ),
+      ),
     );
   }
 

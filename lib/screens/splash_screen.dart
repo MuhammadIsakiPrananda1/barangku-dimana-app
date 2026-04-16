@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../theme/app_theme.dart';
-import 'home_screen.dart';
+import 'main_navigation_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) => const HomeScreen(),
+        pageBuilder: (_, __, ___) => const MainNavigationScreen(),
         transitionDuration: const Duration(milliseconds: 800),
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(opacity: animation, child: child);

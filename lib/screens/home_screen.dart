@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'dart:async';
+import 'dart:ui';
 import '../controllers/item_controller.dart';
 import '../widgets/item_card.dart';
 import '../screens/add_item_screen.dart';
@@ -43,28 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
         Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now());
   }
 
-  void _toggleDarkMode() {
-    HapticFeedback.mediumImpact();
-    ThemeService.isDarkModeNotifier.value =
-        !ThemeService.isDarkModeNotifier.value;
-  }
-
   void _startBarcodeScan() async {
     final res = await ScannerService.scanBarcode(context);
     if (res != null) {
       _searchController.text = res;
       _controller.setSearchQuery(res);
     }
-  }
-
-  void _handlePdfExport() async {
-    HapticFeedback.selectionClick();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text('Menyiapkan Laporan PDF...'),
-          duration: Duration(seconds: 1)),
-    );
-    await PdfService.generateItemReport(_controller.allItems);
   }
 
   @override
@@ -90,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverFillRemaining(child: _buildEmptyState(isDark))
               else
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
@@ -132,7 +116,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-              SliverToBoxAdapter(child: _buildWatermark(isDark)),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 60),
+                  child: Center(child: _buildWatermark(isDark)),
+                ),
+              ),
             ],
           );
         },
@@ -144,33 +133,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHeader(bool isDark) {
     return SliverAppBar(
-      floating: true,
-      backgroundColor: Colors.transparent,
+      pinned: true,
+      backgroundColor: isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
       elevation: 0,
-      centerTitle: false,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      scrolledUnderElevation: 0,
+      centerTitle: true,
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text('BARANGKU',
               style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 18,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : AppTheme.slate900,
-                  letterSpacing: -1)),
+                  letterSpacing: -0.5)),
+          const SizedBox(width: 6),
           Text('DIMANA?',
               style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
                   color: AppTheme.emerald,
-                  letterSpacing: 4)),
+                  letterSpacing: -0.5)),
         ],
       ),
-      actions: [
-        _buildExportButton(isDark),
-        const SizedBox(width: 8),
-        _buildThemeToggle(isDark),
-        const SizedBox(width: 16),
-      ],
     );
   }
 
@@ -222,42 +207,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildExportButton(bool isDark) {
-    return IconButton(
-      onPressed: _handlePdfExport,
-      icon: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            color: AppTheme.emerald.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12)),
-        child: const Icon(Icons.picture_as_pdf_rounded,
-            size: 20, color: AppTheme.emerald),
-      ),
-    );
-  }
-
-  Widget _buildThemeToggle(bool isDark) {
-    return GestureDetector(
-      onTap: _toggleDarkMode,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-            color: (isDark ? Colors.white : AppTheme.slate900)
-                .withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(20)),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-              size: 16, color: isDark ? Colors.amber : AppTheme.slate700),
-          const SizedBox(width: 8),
-          Text(isDark ? 'Light' : 'Dark',
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : AppTheme.slate900)),
-        ]),
-      ),
-    );
-  }
 
   Widget _buildQuickSummary(bool isDark) {
     if (_controller.allItems.isEmpty) return const SizedBox.shrink();
@@ -502,16 +451,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildWatermark(bool isDark) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Center(
-            child: Text('Neverland Studio',
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w900,
-                    color: (isDark ? Colors.white : AppTheme.slate900)
-                        .withValues(alpha: 0.1),
-                    letterSpacing: 3))));
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'NEVERLAND STUDIO',
+          style: TextStyle(
+            color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1),
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 3,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'VERSION 1.4.0',
+          style: TextStyle(
+            color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
+            fontSize: 8,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildDeleteBackground() {

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
@@ -134,8 +135,19 @@ class _EditItemScreenState extends State<EditItemScreen> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      leading: IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDark ? Colors.white : AppTheme.slate900, size: 20), onPressed: () => Navigator.pop(context)),
-      title: Text('EDIT DATA BARANG', style: TextStyle(color: isDark ? Colors.white : AppTheme.slate900, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.5)),
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDark ? Colors.white : AppTheme.slate900, size: 20),
+        onPressed: () => Navigator.pop(context),
+      ),
+      title: Text(
+        'EDIT DATA BARANG',
+        style: TextStyle(
+          color: isDark ? Colors.white : AppTheme.slate900,
+          fontWeight: FontWeight.w800,
+          fontSize: 13,
+          letterSpacing: 2,
+        ),
+      ),
     );
   }
 
