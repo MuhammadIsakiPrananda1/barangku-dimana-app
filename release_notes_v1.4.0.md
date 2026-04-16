@@ -1,50 +1,50 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Neverland%20Studio-Premium%20Release-0F172A?style=for-the-badge&logoColor=white" alt="Studio Badge">
-  <img src="https://img.shields.io/badge/Release-v1.4.0-02569B?style=for-the-badge&logo=github&logoColor=white" alt="Version Badge">
-  <img src="https://img.shields.io/badge/Status-Zen%20Mode-00E5FF?style=for-the-badge" alt="Status Badge">
+  <img src=".github/assets/promotional_banner.jpeg" alt="Barangku Dimana Banner" width="100%">
+  
+  <br/>
+
+  <h2>🧘‍♂️ Release v1.4.0 — Zen Minimalism Overhaul</h2>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/Release-v1.4.0--Stable-0F172A?style=for-the-badge&logo=github&logoColor=white" alt="Version">
+    <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
+    <img src="https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS">
+  </p>
+  
+  <p align="center">
+    <img src="https://img.shields.io/badge/Design-Zen--Minimal-E74C3C?style=for-the-badge" alt="Design">
+    <img src="https://img.shields.io/badge/Speed-Zero--Latency-3498DB?style=for-the-badge" alt="Speed">
+    <img src="https://img.shields.io/badge/Performance-Ultra--Light-2ECC71?style=for-the-badge" alt="Performance">
+  </p>
 </div>
 
 <br/>
 
-# 📦 Release v1.4.0 - "The Zen Mode Update"
+### ✨ Zen Overhaul (Yang Baru)
+Versi 1.4.0 membawa filosofi desain **Zen Minimalism** ke tingkat yang lebih ekstrem, menghapus semua gangguan visual untuk memberikan fokus penuh pada pengelolaan barang Anda.
 
-Selamat datang di era baru **Barangku Dimana?**. Versi **1.4.0** adalah perwujudan dari filosofi *"Less is More"*. Kami melakukan perombakan total di bawah kap mesin untuk memberikan pengalaman yang selembut sutra, bahkan di perangkat yang paling sederhana sekalipun.
+- **Zero-Shadow UI**: Menghapus seluruh efek bayangan (*shadow*) pada kartu barang dan tombol untuk tampilan yang lebih bersih, tajam, dan modern.
+- **Flat Surface Logic**: Mengganti gradasi warna dengan warna solid premium (Slate & Emerald) untuk meningkatkan kontras dan kejelasan visual.
+- **Micro-UX Refinement**: Penyesuaian garis tepi (*border*) menjadi lebih tipis dan elegan, memberikan kesan aplikasi kelas atas yang ringan.
 
-## 🌟 Highlights
+#### 🚀 Optimasi Performa Maksimal
+- **GPU Efficient V2**: Dengan menghilangkan elemen visual yang berat, aplikasi kini berjalan dengan FPS maksimal di seluruh kategori perangkat (HP Kentang Friendly V2).
+- **Instant Response Architecture**: Menghapus animasi transisi yang menghambat kecepatan. Sekarang, daftar barang muncul dan merespon sentuhan secara instan.
+- **Silky Smooth Theme Switch**: Optimalisasi transisi tema (Light/Dark) agar terasa sangat ringan tanpa beban CPU yang berlebih.
 
-### 🍃 Zen Mode UI Overhaul
-Kami menghapus semua distraksi visual yang tidak perlu. Aplikasi kini hadir dengan desain **Flat & Sharp**.
-- **Shadow Elimination:** Kami menghapus 100% *shadow* pada kartu barang untuk tampilan yang lebih bersih dan modern.
-- **Flat Surfaces:** Penggunaan warna solid premium menggantikan gradasi berat, memberikan kejelasan visual yang maksimal.
-
-### 🏃 Performance Recovery (HP Kentang Friendly V2)
-Kami mendengarkan keluhan pengguna mengenai transisi yang "berat".
-- **Instant Response:** Menghapus animasi transisi daftar yang menghambat kecepatan. Sekarang, daftar barang muncul secara instan!
-- **Silky Smooth Theme Switch:** Optimalisasi pergantian Mode Gelap. Berpindah dari terang ke gelap kini terasa ringan tanpa *jank*.
-
-### 💎 Premium Branding & Interactivity
-- **Neverland Studio Signature:** Tanda air sistem kini lebih elegan di seluruh halaman.
-- **About Application:** Halaman "Tentang Aplikasi" yang baru dan interaktif dengan detail informasi studio.
-- **Developer Link:** Kini Bapak bisa langsung mengunjungi profil GitHub pengembang melalui menu pengaturan.
+#### 🛠️ Peningkatan & Sinkronisasi
+- **Versi 1.4.0**: Sinkronisasi versi aplikasi secara menyeluruh di seluruh komponen sistem (Splash, Home, Gradle, Pubspec).
+- **Branding Consistency**: Pembaruan sistem watermark Neverland Studio untuk menjaga estetika "Quiet Luxury" yang konsisten.
 
 ---
 
-## 🛠️ Detail Log Perubahan
-- **[UI]** Border-radius disesuaikan menjadi lebih tajam dan elegan.
-- **[UI]** Skema warna *Emerald-to-Cyan* tetap dipertahankan sebagai aksen premium.
-- **[SYSTEM]** Pembaruan metadata sistem ke versi 1.4.0 (Gradle & Flutter).
-- **[FIX]** Memperbaiki *Duplicate GlobalKey* error saat transisi tema.
+### 📦 Asset Downloads
+Silakan unduh file APK resmi di bawah ini untuk merasakan kecepatan murni dari desain Zen v1.4.0.
+
+> [!TIP]
+> Versi ini adalah standar baru untuk kecepatan aplikasi inventaris. Kami telah membuang semua beban visual agar Bapak bisa bekerja lebih cepat tanpa gangguan.
 
 ---
-
-### 📥 Cara Instalasi
-1. Unduh file `barangku_dimana_v1.4.0.apk` di bawah.
-2. Izinkan instalasi dari sumber tidak dikenal jika diminta.
-3. Nikmati pengalaman **Zen Mode**!
-
----
-
-<p align="center">
-  <i>"Simplicity is the ultimate sophistication."</i><br/>
-  <b>— Neverland Studio —</b>
-</p>
+<div align="center">
+  Dibuat dengan ❤️ oleh <b>Muhammad Isaki Prananda</b>
+</div>
