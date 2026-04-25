@@ -32,7 +32,6 @@
   <p align="center">
     <img src="https://img.shields.io/github/repo-size/MuhammadIsakiPrananda1/barangku-dimana-app?style=for-the-badge&color=2ecc71" alt="Repo Size">
     <img src="https://img.shields.io/github/last-commit/MuhammadIsakiPrananda1/barangku-dimana-app?style=for-the-badge&color=3498db" alt="Last Commit">
-    <img src="https://img.shields.io/badge/Maintained%3F-yes-2ecc71?style=for-the-badge" alt="Maintained">
   </p>
 </div>
 
@@ -105,5 +104,4 @@ Proyek ini menggunakan lisensi **MIT** - lihat file [LICENSE](LICENSE) untuk inf
 ---
 <div align="center">
   <p>Dibuat dengan penuh ketelitian oleh <b>Muhammad Isaki Prananda</b></p>
-  <img src="assets/images/logo_barangku.svg" width="40" alt="Logo">
 </div>
