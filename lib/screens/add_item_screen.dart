@@ -151,15 +151,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
           physics: const BouncingScrollPhysics(),
           children: [
             _buildImageSection(isDark),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             _buildCardHeader('INFORMASI DETAIL', isDark),
             _buildMainSection(isDark),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             _buildCardHeader('SISTEM & MASA BERLAKU', isDark),
             _buildAdvancedSection(isDark),
-            const SizedBox(height: 48),
+            const SizedBox(height: 32),
             _buildSaveButton(isDark),
-            const SizedBox(height: 40),
+            const SizedBox(height: 30),
           ],
         ),
       ),
@@ -192,20 +192,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
       onTap: _showImageSourceDialog,
       child: Container(
         width: double.infinity,
-        height: 220,
+        height: 140,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), width: 2),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), width: 1.5),
           image: _imagePath != null ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover) : null,
         ),
         child: _imagePath == null 
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 48),
-                const SizedBox(height: 12),
+                Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 32),
+                const SizedBox(height: 8),
                 Text('TAMBAHKAN FOTO BARANG', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), letterSpacing: 1.5)),
               ],
             ) 
@@ -230,7 +230,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
           validator: (v) => (v == null || v.isEmpty) ? 'Nama barang wajib diisi' : null,
           suffix: IconButton(icon: const Icon(Icons.auto_awesome_rounded, size: 18, color: AppTheme.emerald), onPressed: _applyAISuggestion),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         _buildOutlinedField(
           controller: _lokasiController, 
           label: 'Lokasi Simpan', 
@@ -239,10 +239,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
           isDark: isDark,
           validator: (v) => (v == null || v.isEmpty) ? 'Lokasi wajib diisi' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         _buildCategorySelector(isDark),
-        const SizedBox(height: 16),
-        _buildOutlinedField(controller: _catatanController, label: 'Catatan Singkat', hint: 'Masukkan catatan tambahan...', icon: Icons.description_outlined, isDark: isDark, maxLines: 3),
+        const SizedBox(height: 12),
+        _buildOutlinedField(controller: _catatanController, label: 'Catatan Singkat', hint: 'Masukkan catatan tambahan...', icon: Icons.description_outlined, isDark: isDark, maxLines: 2),
       ],
     );
   }
@@ -251,12 +251,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
     return Column(
       children: [
         _buildOutlinedField(controller: _barcodeController, label: 'Barcode / QR', hint: 'Masukkan atau scan barcode', icon: Icons.qr_code_2_rounded, isDark: isDark, suffix: IconButton(icon: const Icon(Icons.qr_code_scanner_rounded, size: 20, color: AppTheme.emerald), onPressed: () async { final res = await ScannerService.scanBarcode(context); if (res != null) setState(() => _barcodeController.text = res); })),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         _buildDateSelector('Masa Garansi', _garansiHabis, isDark, Icons.verified_user_outlined, () async {
           final res = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime(2100));
           if (res != null) setState(() => _garansiHabis = res);
         }),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         _buildDateSelector('Kadaluarsa', _tglKadaluarsa, isDark, Icons.timer_outlined, () async {
           final res = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime(2100));
           if (res != null) setState(() => _tglKadaluarsa = res);
@@ -283,13 +283,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
             suffixIcon: suffix,
             filled: true,
             fillColor: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.8),
-            contentPadding: const EdgeInsets.all(20),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             errorStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.redAccent),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08))),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08))),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: AppTheme.emerald, width: 2)),
-            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.redAccent, width: 1.5)),
-            focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.redAccent, width: 2)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08))),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppTheme.emerald, width: 2)),
+            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.redAccent, width: 1.5)),
+            focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.redAccent, width: 2)),
           ),
         ),
       ],
@@ -302,10 +302,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
       children: [
         Padding(padding: const EdgeInsets.only(left: 4, bottom: 6), child: Text('KATEGORI', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.emerald, letterSpacing: 1))),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           decoration: BoxDecoration(
             color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.8),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08)),
           ),
           child: DropdownButtonHideUnderline(
@@ -314,7 +314,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               isExpanded: true,
               icon: const Icon(Icons.keyboard_arrow_down_rounded),
               dropdownColor: isDark ? AppTheme.slate800 : Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               items: CategoryModel.allCategories.map((c) => DropdownMenuItem(
                 value: c.name,
                 child: Row(children: [Icon(c.icon, size: 18, color: c.color), const SizedBox(width: 12), Text(c.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: isDark ? Colors.white : AppTheme.slate900))]),
@@ -334,19 +334,19 @@ class _AddItemScreenState extends State<AddItemScreen> {
         Padding(padding: const EdgeInsets.only(left: 4, bottom: 6), child: Text(label.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.emerald, letterSpacing: 1))),
         InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.08)),
             ),
             child: Row(
               children: [
                 Icon(icon, size: 20, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.3)),
-                const SizedBox(width: 16),
-                Text(date != null ? "${date.day}/${date.month}/${date.year}" : 'Ketuk untuk set tanggal', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: date != null ? (isDark ? Colors.white : AppTheme.slate900) : (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2))),
+                const SizedBox(width: 12),
+                Text(date != null ? "${date.day}/${date.month}/${date.year}" : 'Set tanggal', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: date != null ? (isDark ? Colors.white : AppTheme.slate900) : (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.3))),
                 const Spacer(),
                 const Icon(Icons.calendar_month_rounded, size: 18, color: AppTheme.emerald),
               ],

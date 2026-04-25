@@ -20,8 +20,19 @@ class NotificationService {
       iOS: iosSettings,
     );
 
-    await _notificationsPlugin.initialize(settings: initSettings);
+    await _notificationsPlugin.initialize(
+      settings: initSettings,
+      onDidReceiveNotificationResponse: (details) {},
+    );
+
+    // Request permissions for Android 13+ and iOS
+    final androidPlugin = _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin != null) {
+      await androidPlugin.requestNotificationsPermission();
+    }
   }
+
+
 
   Future<void> scheduleNotification({
     required int id,
@@ -41,8 +52,11 @@ class NotificationService {
           channelDescription: 'Notifikasi untuk garansi dan peminjaman barang',
           importance: Importance.max,
           priority: Priority.high,
+          playSound: true,
+          enableVibration: true,
+          icon: '@mipmap/ic_launcher',
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: DarwinNotificationDetails(presentSound: true, presentAlert: true, presentBadge: true),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );

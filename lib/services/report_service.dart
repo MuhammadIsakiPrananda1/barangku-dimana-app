@@ -7,8 +7,8 @@ import '../models/item_model.dart';
 class ReportService {
   static Future<void> generateInventoryPdf(List<ItemModel> items) async {
     final pdf = pw.Document();
-    final font = await PdfGoogleFonts.poppinsRegular();
-    final fontBold = await PdfGoogleFonts.poppinsBold();
+    final font = await PdfGoogleFonts.comicNeueRegular();
+    final fontBold = await PdfGoogleFonts.comicNeueBold();
     final dateStr = DateFormat('dd MMMM yyyy').format(DateTime.now());
 
     pdf.addPage(

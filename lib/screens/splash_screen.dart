@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../theme/app_theme.dart';
 import 'main_navigation_screen.dart';
+import 'pin_lock_screen.dart';
+import '../services/settings_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -45,9 +48,13 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 3000));
     if (!mounted) return;
 
+    final targetScreen = SettingsService.pinEnabled 
+        ? const PinLockScreen(isSetupMode: false) 
+        : const MainNavigationScreen();
+
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) => const MainNavigationScreen(),
+        pageBuilder: (_, __, ___) => targetScreen,
         transitionDuration: const Duration(milliseconds: 800),
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(opacity: animation, child: child);
@@ -146,7 +153,7 @@ class _SplashScreenState extends State<SplashScreen> {
             if (_version.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
-                'V $_version',
+                'v$_version',
                 style: TextStyle(
                   color: AppTheme.emerald.withValues(alpha: 0.3),
                   fontSize: 9,

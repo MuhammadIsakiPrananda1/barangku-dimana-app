@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // --- Core Colors ---
@@ -93,8 +94,7 @@ class AppTheme {
       error: const Color(0xFFEF4444),
     );
 
-    final textTheme = ThemeData.light().textTheme.apply(
-      fontFamily: 'Inter', 
+    final textTheme = GoogleFonts.comicNeueTextTheme(ThemeData.light().textTheme).apply(
       bodyColor: slate900,
       displayColor: slate900,
     );
@@ -103,6 +103,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: pearlScaffold,
+      fontFamily: GoogleFonts.comicNeue().fontFamily,
       textTheme: textTheme,
       
       appBarTheme: AppBarTheme(
@@ -145,8 +146,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(color: emerald, width: 2),
         ),
-        hintStyle: TextStyle(color: slate900.withValues(alpha: 0.35), fontWeight: FontWeight.w400),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+        hintStyle: GoogleFonts.comicNeue(color: slate900.withValues(alpha: 0.35), fontWeight: FontWeight.w400),
+        labelStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w600),
       ),
       
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -158,7 +159,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
           ),
-          textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, letterSpacing: 0.3),
+          textStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w800, fontSize: 16, letterSpacing: 0.3),
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 28),
         ),
       ),
@@ -174,7 +175,7 @@ class AppTheme {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        titleTextStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: slate900),
+        titleTextStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w900, fontSize: 22, color: slate900),
       ),
       
       chipTheme: ChipThemeData(
@@ -182,7 +183,7 @@ class AppTheme {
         backgroundColor: lightMint,
         selectedColor: emerald,
         side: BorderSide(color: emerald.withValues(alpha: 0.08)),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: slate900),
+        labelStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w700, fontSize: 14, color: slate900),
         secondaryLabelStyle: const TextStyle(color: Colors.white),
       ),
     );
@@ -200,8 +201,7 @@ class AppTheme {
       error: const Color(0xFFF87171),
     );
 
-    final textTheme = ThemeData.dark().textTheme.apply(
-      fontFamily: 'Inter',
+    final textTheme = GoogleFonts.comicNeueTextTheme(ThemeData.dark().textTheme).apply(
       bodyColor: Colors.white.withValues(alpha: 0.9),
       displayColor: Colors.white,
     );
@@ -210,6 +210,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: midnightScaffold,
+      fontFamily: GoogleFonts.comicNeue().fontFamily,
       textTheme: textTheme,
       
       appBarTheme: AppBarTheme(
@@ -252,7 +253,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(color: emerald, width: 2),
         ),
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontWeight: FontWeight.w400),
+        hintStyle: GoogleFonts.comicNeue(color: Colors.white.withValues(alpha: 0.3), fontWeight: FontWeight.w400),
       ),
       
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -264,7 +265,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
           ),
-          textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, letterSpacing: 0.3),
+          textStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w800, fontSize: 16, letterSpacing: 0.3),
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 28),
         ),
       ),
@@ -280,7 +281,7 @@ class AppTheme {
         backgroundColor: slate800,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        titleTextStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white),
+        titleTextStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white),
       ),
       
       chipTheme: ChipThemeData(
@@ -288,14 +289,14 @@ class AppTheme {
         backgroundColor: slate700,
         selectedColor: emerald,
         side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.white),
+        labelStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.white),
       ),
       
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: slate700,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        contentTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        contentTextStyle: GoogleFonts.comicNeue(color: Colors.white, fontWeight: FontWeight.w700),
       ),
     );
   }

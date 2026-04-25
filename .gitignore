@@ -29,10 +29,12 @@ lib/generated_plugin_registrant.dart
 # Android
 .gradle/
 local.properties
+key.properties
 *.apk
 *.ap_
 *.dex
 *.keystore
+*.jks
 !debug.keystore
 
 # iOS

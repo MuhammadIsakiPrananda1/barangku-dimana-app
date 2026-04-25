@@ -1,15 +1,29 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/theme_service.dart';
 import '../services/pdf_service.dart';
+import '../services/settings_service.dart';
+import '../services/notification_service.dart';
 import '../controllers/item_controller.dart';
 import '../theme/app_theme.dart';
+import 'profile_screen.dart';
+import 'pin_lock_screen.dart';
+import 'faq_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+
 
   Future<void> _launchUrl(String urlString) async {
     final Uri url = Uri.parse(urlString);
@@ -21,12 +35,79 @@ class SettingsScreen extends StatelessWidget {
   void _handlePdfExport(BuildContext context, ItemController controller) async {
     HapticFeedback.selectionClick();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Menyiapkan Laporan PDF...'),
-        duration: Duration(seconds: 1),
+      SnackBar(
+        content: const Text('Menyiapkan Laporan PDF...'),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppTheme.emerald,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 2),
       ),
     );
     await PdfService.generateItemReport(controller.allItems);
+  }
+
+  void _showMockupSnackBar(BuildContext context, String message) {
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+
+
+  Future<void> _handleDeleteAll(BuildContext context, ItemController controller) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('Hapus Semua Data?', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          content: const Text('Tindakan ini permanen dan tidak dapat dibatalkan. Semua daftar barang Anda akan direset menjadi kosong.'),
+          actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Batal', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Hapus', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result == true) {
+      final success = await controller.deleteAllItems();
+      if (success && mounted) {
+        _showMockupSnackBar(context, 'Semua data barang berhasil dihapus');
+      }
+    }
   }
 
   void _showAboutSheet(BuildContext context, bool isDark) {
@@ -72,8 +153,8 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Versi 1.4.0',
+              const Text(
+                'v1.4.0',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -85,7 +166,7 @@ class SettingsScreen extends StatelessWidget {
                 'Solusi cerdas untuk mencatat dan melacak lokasi penyimpanan barang berharga Anda dengan mudah dan rapi.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 14,
                   height: 1.5,
                   color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.7),
                 ),
@@ -124,57 +205,163 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.comicNeue(
           color: isDark ? Colors.white : AppTheme.slate900,
-          fontSize: 18,
+          fontSize: 22,
           fontWeight: FontWeight.w800,
           letterSpacing: -0.5,
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        physics: const BouncingScrollPhysics(),
         children: [
-          _buildSectionHeader('Tampilan', isDark),
-          _buildSettingsTile(
-            icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-            title: 'Mode Gelap',
-            subtitle: isDark ? 'Aktif' : 'Nonaktif',
-            trailing: Switch(
-              value: isDark,
-              onChanged: (value) {
-                HapticFeedback.mediumImpact();
-                ThemeService.isDarkModeNotifier.value = value;
-              },
-              activeColor: AppTheme.emerald,
-            ),
+          _buildSectionHeader('Akun & Keamanan', isDark),
+          _buildSettingsGroup(
             isDark: isDark,
+            children: [
+              _buildSettingsRow(
+                icon: Icons.person_rounded,
+                iconColor: Colors.blue,
+                title: 'Profil Saya',
+                subtitle: SettingsService.userName,
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
+                  setState(() {});
+                },
+                isDark: isDark,
+              ),
+
+              _buildSettingsRow(
+                icon: Icons.fingerprint_rounded,
+                iconColor: Colors.teal,
+                title: 'Kunci PIN Aplikasi',
+                trailing: Switch(
+                  value: SettingsService.pinEnabled,
+                  onChanged: (v) async {
+                    if (v) {
+                      final result = await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => const PinLockScreen(isSetupMode: true)));
+                      if (result == true) setState(() {});
+                    } else {
+                      await SettingsService.togglePinLock(false);
+                      setState(() {});
+                      _showMockupSnackBar(context, 'Kunci PIN Dinonaktifkan');
+                    }
+                  },
+                  activeColor: AppTheme.emerald,
+                ),
+                isDark: isDark,
+                isLast: true,
+              ),
+            ],
           ),
+
+          _buildSectionHeader('Preferensi', isDark),
+          _buildSettingsGroup(
+            isDark: isDark,
+            children: [
+              _buildSettingsRow(
+                icon: isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                iconColor: AppTheme.emerald,
+                title: 'Tema Gelap (Dark Mode)',
+                trailing: Switch(
+                  value: isDark,
+                  onChanged: (value) {
+                    HapticFeedback.mediumImpact();
+                    ThemeService.toggleTheme(value);
+                  },
+                  activeColor: AppTheme.emerald,
+                ),
+                isDark: isDark,
+              ),
+              _buildSettingsRow(
+                icon: Icons.notifications_rounded,
+                iconColor: Colors.orange,
+                title: 'Notifikasi Garansi',
+                subtitle: 'Ingatkan sebelum garansi habis',
+                trailing: Switch(
+                  value: SettingsService.warrantyNotifEnabled,
+                  onChanged: (v) async {
+                    if (v) {
+                      final status = await Permission.notification.request();
+                      if (status.isGranted) {
+                        await SettingsService.toggleWarrantyNotif(true);
+                        setState(() {});
+                        _showMockupSnackBar(context, 'Notifikasi Diaktifkan');
+                      } else {
+                        _showMockupSnackBar(context, 'Izin notifikasi ditolak!');
+                        await SettingsService.toggleWarrantyNotif(false);
+                        setState(() {});
+                      }
+                    } else {
+                      await SettingsService.toggleWarrantyNotif(false);
+                      setState(() {});
+                      _showMockupSnackBar(context, 'Notifikasi Dinonaktifkan');
+                    }
+                  },
+                  activeColor: AppTheme.emerald,
+                ),
+                isDark: isDark,
+                isLast: true,
+              ),
+            ],
+          ),
+
+          _buildSectionHeader('Data & Laporan', isDark),
+          _buildSettingsGroup(
+            isDark: isDark,
+            children: [
+              _buildSettingsRow(
+                icon: Icons.picture_as_pdf_rounded,
+                iconColor: Colors.redAccent,
+                title: 'Ekspor Data ke PDF',
+                onTap: () => _handlePdfExport(context, controller),
+                isDark: isDark,
+              ),
+              _buildSettingsRow(
+                icon: Icons.delete_forever_rounded,
+                iconColor: Colors.red,
+                title: 'Hapus Semua Data',
+                titleColor: Colors.red,
+                onTap: () => _handleDeleteAll(context, controller),
+                isDark: isDark,
+                isLast: true,
+              ),
+            ],
+          ),
+
+          _buildSectionHeader('Bantuan & Informasi', isDark),
+          _buildSettingsGroup(
+            isDark: isDark,
+            children: [
+              _buildSettingsRow(
+                icon: Icons.help_outline_rounded,
+                iconColor: Colors.green,
+                title: 'Pusat Bantuan & FAQ',
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const FaqScreen()));
+                },
+                isDark: isDark,
+              ),
+              _buildSettingsRow(
+                icon: Icons.info_outline_rounded,
+                iconColor: Colors.cyan,
+                title: 'Tentang Aplikasi',
+                onTap: () => _showAboutSheet(context, isDark),
+                isDark: isDark,
+              ),
+              _buildSettingsRow(
+                icon: Icons.code_rounded,
+                iconColor: Colors.brown,
+                title: 'Hubungi Developer',
+                onTap: () => _launchUrl('https://github.com/MuhammadIsakiPrananda1'),
+                isDark: isDark,
+                isLast: true,
+              ),
+            ],
+          ),
+
           const SizedBox(height: 20),
-          _buildSectionHeader('Data', isDark),
-          _buildSettingsTile(
-            icon: Icons.picture_as_pdf_rounded,
-            title: 'Ekspor PDF',
-            subtitle: 'Simpan daftar barang ke file PDF',
-            onTap: () => _handlePdfExport(context, controller),
-            isDark: isDark,
-          ),
-          const SizedBox(height: 20),
-          _buildSectionHeader('Tentang', isDark),
-          _buildSettingsTile(
-            icon: Icons.info_outline_rounded,
-            title: 'Tentang Aplikasi',
-            subtitle: 'Versi 1.4.0',
-            onTap: () => _showAboutSheet(context, isDark),
-            isDark: isDark,
-          ),
-          _buildSettingsTile(
-            icon: Icons.code_rounded,
-            title: 'Developer',
-            subtitle: 'Neverland Studio',
-            onTap: () => _launchUrl('https://github.com/MuhammadIsakiPrananda1'),
-            isDark: isDark,
-          ),
-          const SizedBox(height: 40),
           Center(
             child: Column(
               children: [
@@ -182,14 +369,14 @@ class SettingsScreen extends StatelessWidget {
                   'NEVERLAND STUDIO',
                   style: TextStyle(
                     color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2),
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: 3,
+                    letterSpacing: 2,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'VERSION 1.4.0',
+                  'v1.4.0',
                   style: TextStyle(
                     color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1),
                     fontSize: 9,
@@ -200,6 +387,7 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -207,61 +395,98 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _buildSectionHeader(String title, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 12),
+      padding: const EdgeInsets.only(left: 8, bottom: 8, top: 4),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
           color: AppTheme.emerald,
           fontSize: 11,
           fontWeight: FontWeight.w900,
-          letterSpacing: 1.5,
+          letterSpacing: 1.2,
         ),
       ),
     );
   }
 
-  Widget _buildSettingsTile({
+  Widget _buildSettingsGroup({required List<Widget> children, required bool isDark}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.slate800.withValues(alpha: 0.5) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildSettingsRow({
     required IconData icon,
+    required Color iconColor,
     required String title,
-    required String subtitle,
+    String? subtitle,
+    Color? titleColor,
     Widget? trailing,
     VoidCallback? onTap,
     required bool isDark,
+    bool isLast = false,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.slate800.withValues(alpha: 0.5) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: (isDark ? Colors.white : AppTheme.emerald).withValues(alpha: 0.05)),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: AppTheme.emerald.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: AppTheme.emerald, size: 20),
+    return InkWell(
+      onTap: onTap ?? (trailing != null ? null : () {}),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
+                  ),
+                ),
         ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-            color: isDark ? Colors.white : AppTheme.slate900,
-          ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: iconColor, size: 20),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: titleColor ?? (isDark ? Colors.white : AppTheme.slate900),
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.slate500,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (trailing != null) trailing else if (onTap != null) const Icon(Icons.chevron_right_rounded, color: AppTheme.slate400, size: 20),
+          ],
         ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 13,
-            color: AppTheme.slate500,
-          ),
-        ),
-        trailing: trailing,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }

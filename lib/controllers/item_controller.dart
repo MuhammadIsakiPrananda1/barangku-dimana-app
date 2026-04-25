@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/item_model.dart';
 import '../database/database_helper.dart';
 import '../services/notification_service.dart';
+import '../services/settings_service.dart';
 
 class ItemController extends ChangeNotifier {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
@@ -93,6 +94,23 @@ class ItemController extends ChangeNotifier {
     }
   }
 
+  Future<bool> deleteAllItems() async {
+    try {
+      final itemsToClear = List<ItemModel>.from(allItems);
+      for (var item in itemsToClear) {
+        if (item.id != null) {
+          _cancelAlerts(item.id!);
+        }
+      }
+      await _dbHelper.deleteAllItems();
+      await loadItems();
+      return true;
+    } catch (e) {
+      debugPrint('Error deleting all items: $e');
+      return false;
+    }
+  }
+
   void _scheduleAlerts(ItemModel item) {
     if (item.id == null) return;
     
@@ -100,6 +118,8 @@ class ItemController extends ChangeNotifier {
     
     // Cancel existing first
     _cancelAlerts(item.id!);
+    
+    if (!SettingsService.warrantyNotifEnabled) return;
 
     // Schedule Warranty
     if (item.garansiHabis != null) {

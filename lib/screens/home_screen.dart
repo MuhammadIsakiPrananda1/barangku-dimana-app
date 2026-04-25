@@ -25,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   late ItemController _controller;
   late Stream<DateTime> _clockStream;
+  final Set<int> _selectedItems = {};
+  bool get _isSelectionMode => _selectedItems.isNotEmpty;
 
   @override
   void initState() {
@@ -40,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _controller.setSearchQuery(_searchController.text);
     });
     _clockStream =
-        Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now());
+        Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now()).asBroadcastStream();
   }
 
   void _startBarcodeScan() async {
@@ -55,7 +57,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
+    return PopScope(
+      canPop: !_isSelectionMode,
+      onPopInvoked: (didPop) {
+        if (!didPop && _isSelectionMode) {
+          setState(() {
+            _selectedItems.clear();
+          });
+        }
+      },
+      child: Scaffold(
       backgroundColor:
           isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
       body: Consumer<ItemController>(
@@ -64,8 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
             physics: const BouncingScrollPhysics(),
             slivers: [
               _buildHeader(isDark),
-              SliverToBoxAdapter(child: _buildClockSection(isDark)),
-              SliverToBoxAdapter(child: _buildQuickSummary(isDark)),
+              SliverToBoxAdapter(child: _buildDashboardOverview(isDark)),
               SliverToBoxAdapter(child: _buildUnifiedToolbar(isDark)),
               if (controller.isLoading)
                 const SliverFillRemaining(
@@ -79,37 +89,38 @@ class _HomeScreenState extends State<HomeScreen> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final item = controller.filteredItems[index];
-                        return Dismissible(
-                          key: Key('dismiss_${item.id}'),
-                          direction: DismissDirection.endToStart,
-                          background: _buildDeleteBackground(),
-                          confirmDismiss: (direction) =>
-                              _showDeleteConfirmation(context, item),
-                          onDismissed: (direction) {
-                            controller.deleteItem(item);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('${item.namaBarang} dihapus'),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: AppTheme.slate800,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                            );
+                        return ItemCard(
+                          key: ValueKey(item.id),
+                          item: item,
+                          isSelected: _selectedItems.contains(item.id),
+                          onLongPress: () {
+                            if (!_isSelectionMode) {
+                              HapticFeedback.mediumImpact();
+                              setState(() {
+                                _selectedItems.add(item.id!);
+                              });
+                            }
                           },
-                          child: ItemCard(
-                            item: item,
-                            onTap: () async {
+                          onTap: () async {
+                            if (_isSelectionMode) {
+                              setState(() {
+                                if (_selectedItems.contains(item.id)) {
+                                  _selectedItems.remove(item.id);
+                                } else {
+                                  _selectedItems.add(item.id!);
+                                }
+                              });
+                            } else {
                               final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => EditItemScreen(item: item)),
                               );
                               if (result == true) controller.loadItems();
-                            },
-                            onFavoriteToggle: (isFav) =>
-                                controller.toggleFavorite(item, isFav),
-                          ),
+                            }
+                          },
+                          onFavoriteToggle: (isFav) =>
+                              controller.toggleFavorite(item, isFav),
                         );
                       },
                       childCount: controller.filteredItems.length,
@@ -126,80 +137,112 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
-      floatingActionButton: _buildMinimalistFAB(isDark),
+      floatingActionButton: !_isSelectionMode ? _buildMinimalistFAB(isDark) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      ),
     );
   }
 
   Widget _buildHeader(bool isDark) {
     return SliverAppBar(
       pinned: true,
-      backgroundColor: isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
-      elevation: 0,
+      backgroundColor: _isSelectionMode
+          ? (isDark ? AppTheme.slate800 : AppTheme.emerald)
+          : (isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold),
+      elevation: _isSelectionMode ? 4 : 0,
       scrolledUnderElevation: 0,
-      centerTitle: true,
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('BARANGKU',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : AppTheme.slate900,
-                  letterSpacing: -0.5)),
-          const SizedBox(width: 6),
-          Text('DIMANA?',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: AppTheme.emerald,
-                  letterSpacing: -0.5)),
-        ],
-      ),
+      centerTitle: !_isSelectionMode,
+      leading: _isSelectionMode
+          ? IconButton(
+              icon: const Icon(Icons.close_rounded, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  _selectedItems.clear();
+                });
+              },
+            )
+          : null,
+      title: _isSelectionMode
+          ? Text('${_selectedItems.length} Terpilih',
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('BARANGKU',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white : AppTheme.slate900,
+                        letterSpacing: -0.5)),
+                const SizedBox(width: 6),
+                Text('DIMANA?',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        color: AppTheme.emerald,
+                        letterSpacing: -0.5)),
+              ],
+            ),
+      actions: _isSelectionMode
+          ? [
+              IconButton(
+                icon: const Icon(Icons.delete_sweep_rounded, color: Colors.white),
+                onPressed: () => _showMultiDeleteConfirmation(context),
+              ),
+            ]
+          : null,
     );
   }
 
-  Widget _buildClockSection(bool isDark) {
+  Widget _buildDashboardOverview(bool isDark) {
     return StreamBuilder<DateTime>(
       stream: _clockStream,
       initialData: DateTime.now(),
       builder: (context, snapshot) {
         final time = snapshot.data ?? DateTime.now();
         final timeStr = DateFormat('HH:mm:ss').format(time);
-        final dateStr = DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(time);
+        final dateStr = DateFormat('EEEE, d MMM yyyy', 'id_ID').format(time);
 
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppTheme.emerald.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppTheme.emerald.withValues(alpha: 0.1)),
-          ),
+        final total = _controller.allItems.length;
+        final favorites = _controller.allItems.where((i) => i.isFavorite).length;
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(dateStr,
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.slate500,
+                          letterSpacing: 0.5)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(timeStr,
+                          style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w900,
+                              color: isDark ? Colors.white : AppTheme.slate900,
+                              letterSpacing: -1)),
+                    ],
+                  ),
+                ],
+              ),
+              if (_controller.allItems.isNotEmpty)
+                Row(
                   children: [
-                    Text(dateStr.toUpperCase(),
-                        style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w900,
-                            color: AppTheme.emerald,
-                            letterSpacing: 1.5)),
-                    const SizedBox(height: 4),
-                    Text(timeStr,
-                        style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : AppTheme.slate900,
-                            letterSpacing: -0.5)),
+                    _buildMiniStat(isDark, total.toString(), 'Semua', AppTheme.emerald),
+                    const SizedBox(width: 8),
+                    _buildMiniStat(isDark, favorites.toString(), 'Favorit', Colors.amber),
                   ],
                 ),
-              ),
-              Icon(Icons.access_time_filled_rounded,
-                  size: 48, color: AppTheme.emerald.withValues(alpha: 0.2)),
             ],
           ),
         );
@@ -207,53 +250,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
-  Widget _buildQuickSummary(bool isDark) {
-    if (_controller.allItems.isEmpty) return const SizedBox.shrink();
-    final total = _controller.allItems.length;
-    final favorites = _controller.allItems.where((i) => i.isFavorite).length;
-
+  Widget _buildMiniStat(bool isDark, String value, String label, Color color) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color:
-            (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(20),
+        color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: (isDark ? Colors.white : AppTheme.emerald)
-                .withValues(alpha: 0.05)),
+          color: color.withValues(alpha: 0.2),
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
         children: [
-          _buildSummaryItem('Total', total.toString(), AppTheme.emerald),
-          _buildSummaryDivider(isDark),
-          _buildSummaryItem('Favorit', favorites.toString(), Colors.amber),
+          Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: color)),
+          Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppTheme.slate500)),
         ],
       ),
     );
-  }
-
-  Widget _buildSummaryItem(String label, String value, Color color) {
-    return Column(children: [
-      Text(value,
-          style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.w900, color: color)),
-      Text(label,
-          style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.slate500)),
-    ]);
-  }
-
-  Widget _buildSummaryDivider(bool isDark) {
-    return Container(
-        width: 1,
-        height: 24,
-        color:
-            (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1));
   }
 
   Widget _buildUnifiedToolbar(bool isDark) {
@@ -465,7 +478,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 2),
         Text(
-          'VERSION 1.4.0',
+          'v1.4.0',
           style: TextStyle(
             color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
             fontSize: 8,
@@ -477,38 +490,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDeleteBackground() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.only(right: 20),
-      decoration: BoxDecoration(
-        color: Colors.redAccent.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child:
-          const Icon(Icons.delete_sweep_rounded, color: Colors.white, size: 30),
-    );
-  }
-
-  Future<bool?> _showDeleteConfirmation(
-      BuildContext context, dynamic item) async {
+  Future<void> _showMultiDeleteConfirmation(BuildContext context) async {
     HapticFeedback.mediumImpact();
-    return await showDialog<bool>(
+    final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
             ? AppTheme.slate900
             : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Hapus Barang?',
-            style: TextStyle(fontWeight: FontWeight.w900)),
-        content: Text(
-            'Yakin ingin menghapus "${item.namaBarang}"? Tindakan ini tidak bisa dibatalkan.'),
+        title: Text('Hapus ${_selectedItems.length} Barang?',
+            style: const TextStyle(fontWeight: FontWeight.w900)),
+        content: const Text(
+            'Yakin ingin menghapus barang-barang yang dipilih? Tindakan ini tidak bisa dibatalkan.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('BATAL',
+            child: const Text('BATAL',
                 style: TextStyle(
                     color: AppTheme.slate500, fontWeight: FontWeight.bold)),
           ),
@@ -527,5 +525,26 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+
+    if (result == true) {
+      for (var id in _selectedItems) {
+        final item = _controller.allItems.firstWhere((e) => e.id == id);
+        await _controller.deleteItem(item);
+      }
+      setState(() {
+        _selectedItems.clear();
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Barang berhasil dihapus'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppTheme.slate800,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
+    }
   }
 }
