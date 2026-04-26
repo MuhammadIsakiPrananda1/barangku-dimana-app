@@ -7,6 +7,8 @@ import '../theme/app_theme.dart';
 import 'main_navigation_screen.dart';
 import 'pin_lock_screen.dart';
 import '../services/settings_service.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -143,22 +145,22 @@ class _SplashScreenState extends State<SplashScreen> {
             
             Text(
               'NEVERLAND STUDIO',
-              style: TextStyle(
-                color: AppTheme.slate900.withValues(alpha: 0.2),
-                fontSize: 10,
+              style: GoogleFonts.poppins(
+                color: AppTheme.slate900.withValues(alpha: 0.8),
+                fontSize: 12,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,
               ),
             ),
             if (_version.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
-                'v$_version',
-                style: TextStyle(
-                  color: AppTheme.emerald.withValues(alpha: 0.3),
-                  fontSize: 9,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1,
+                'VERSION $_version'.toUpperCase(),
+                style: GoogleFonts.poppins(
+                  color: AppTheme.emerald.withValues(alpha: 0.9),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
                 ),
               ),
             ],

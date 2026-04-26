@@ -42,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _controller.setSearchQuery(_searchController.text);
     });
     _clockStream =
-        Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now()).asBroadcastStream();
+        Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now())
+            .asBroadcastStream();
   }
 
   void _startBarcodeScan() async {
@@ -67,78 +68,80 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
       child: Scaffold(
-      backgroundColor:
-          isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
-      body: Consumer<ItemController>(
-        builder: (context, controller, child) {
-          return CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              _buildHeader(isDark),
-              SliverToBoxAdapter(child: _buildDashboardOverview(isDark)),
-              SliverToBoxAdapter(child: _buildUnifiedToolbar(isDark)),
-              if (controller.isLoading)
-                const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()))
-              else if (controller.filteredItems.isEmpty)
-                SliverFillRemaining(child: _buildEmptyState(isDark))
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final item = controller.filteredItems[index];
-                        return ItemCard(
-                          key: ValueKey(item.id),
-                          item: item,
-                          isSelected: _selectedItems.contains(item.id),
-                          onLongPress: () {
-                            if (!_isSelectionMode) {
-                              HapticFeedback.mediumImpact();
-                              setState(() {
-                                _selectedItems.add(item.id!);
-                              });
-                            }
-                          },
-                          onTap: () async {
-                            if (_isSelectionMode) {
-                              setState(() {
-                                if (_selectedItems.contains(item.id)) {
-                                  _selectedItems.remove(item.id);
-                                } else {
+        backgroundColor:
+            isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
+        body: Consumer<ItemController>(
+          builder: (context, controller, child) {
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                _buildHeader(isDark),
+                SliverToBoxAdapter(child: _buildDashboardOverview(isDark)),
+                SliverToBoxAdapter(child: _buildUnifiedToolbar(isDark)),
+                if (controller.isLoading)
+                  const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()))
+                else if (controller.filteredItems.isEmpty)
+                  SliverFillRemaining(child: _buildEmptyState(isDark))
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final item = controller.filteredItems[index];
+                          return ItemCard(
+                            key: ValueKey(item.id),
+                            item: item,
+                            isSelected: _selectedItems.contains(item.id),
+                            onLongPress: () {
+                              if (!_isSelectionMode) {
+                                HapticFeedback.mediumImpact();
+                                setState(() {
                                   _selectedItems.add(item.id!);
-                                }
-                              });
-                            } else {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => EditItemScreen(item: item)),
-                              );
-                              if (result == true) controller.loadItems();
-                            }
-                          },
-                          onFavoriteToggle: (isFav) =>
-                              controller.toggleFavorite(item, isFav),
-                        );
-                      },
-                      childCount: controller.filteredItems.length,
+                                });
+                              }
+                            },
+                            onTap: () async {
+                              if (_isSelectionMode) {
+                                setState(() {
+                                  if (_selectedItems.contains(item.id)) {
+                                    _selectedItems.remove(item.id);
+                                  } else {
+                                    _selectedItems.add(item.id!);
+                                  }
+                                });
+                              } else {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          EditItemScreen(item: item)),
+                                );
+                                if (result == true) controller.loadItems();
+                              }
+                            },
+                            onFavoriteToggle: (isFav) =>
+                                controller.toggleFavorite(item, isFav),
+                          );
+                        },
+                        childCount: controller.filteredItems.length,
+                      ),
                     ),
                   ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 60),
+                    child: Center(child: _buildWatermark(isDark)),
+                  ),
                 ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 60),
-                  child: Center(child: _buildWatermark(isDark)),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-      floatingActionButton: !_isSelectionMode ? _buildMinimalistFAB(isDark) : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+              ],
+            );
+          },
+        ),
+        floatingActionButton:
+            !_isSelectionMode ? _buildMinimalistFAB(isDark) : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
@@ -164,7 +167,8 @@ class _HomeScreenState extends State<HomeScreen> {
           : null,
       title: _isSelectionMode
           ? Text('${_selectedItems.length} Terpilih',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold))
           : Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -186,7 +190,8 @@ class _HomeScreenState extends State<HomeScreen> {
       actions: _isSelectionMode
           ? [
               IconButton(
-                icon: const Icon(Icons.delete_sweep_rounded, color: Colors.white),
+                icon:
+                    const Icon(Icons.delete_sweep_rounded, color: Colors.white),
                 onPressed: () => _showMultiDeleteConfirmation(context),
               ),
             ]
@@ -204,7 +209,8 @@ class _HomeScreenState extends State<HomeScreen> {
         final dateStr = DateFormat('EEEE, d MMM yyyy', 'id_ID').format(time);
 
         final total = _controller.allItems.length;
-        final favorites = _controller.allItems.where((i) => i.isFavorite).length;
+        final favorites =
+            _controller.allItems.where((i) => i.isFavorite).length;
 
         return Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
@@ -238,9 +244,11 @@ class _HomeScreenState extends State<HomeScreen> {
               if (_controller.allItems.isNotEmpty)
                 Row(
                   children: [
-                    _buildMiniStat(isDark, total.toString(), 'Semua', AppTheme.emerald),
+                    _buildMiniStat(
+                        isDark, total.toString(), 'Semua', AppTheme.emerald),
                     const SizedBox(width: 8),
-                    _buildMiniStat(isDark, favorites.toString(), 'Favorit', Colors.amber),
+                    _buildMiniStat(
+                        isDark, favorites.toString(), 'Favorit', Colors.amber),
                   ],
                 ),
             ],
@@ -254,7 +262,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.5),
+        color:
+            (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: color.withValues(alpha: 0.2),
@@ -262,8 +271,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Column(
         children: [
-          Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: color)),
-          Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppTheme.slate500)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w900, color: color)),
+          Text(label,
+              style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.slate500)),
         ],
       ),
     );
@@ -470,7 +485,8 @@ class _HomeScreenState extends State<HomeScreen> {
         Text(
           'NEVERLAND STUDIO',
           style: TextStyle(
-            color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1),
+            color: (isDark ? Colors.white : AppTheme.slate900)
+                .withValues(alpha: 0.1),
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 3,
@@ -480,7 +496,8 @@ class _HomeScreenState extends State<HomeScreen> {
         Text(
           'v1.4.0',
           style: TextStyle(
-            color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
+            color: (isDark ? Colors.white : AppTheme.slate900)
+                .withValues(alpha: 0.05),
             fontSize: 8,
             fontWeight: FontWeight.w800,
             letterSpacing: 1,
@@ -540,8 +557,8 @@ class _HomeScreenState extends State<HomeScreen> {
             content: const Text('Barang berhasil dihapus'),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AppTheme.slate800,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
       }

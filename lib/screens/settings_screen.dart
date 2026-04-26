@@ -23,8 +23,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-
-
   Future<void> _launchUrl(String urlString) async {
     final Uri url = Uri.parse(urlString);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -57,16 +55,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-
-
-  Future<void> _handleDeleteAll(BuildContext context, ItemController controller) async {
+  Future<void> _handleDeleteAll(
+      BuildContext context, ItemController controller) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('Hapus Semua Data?', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-          content: const Text('Tindakan ini permanen dan tidak dapat dibatalkan. Semua daftar barang Anda akan direset menjadi kosong.'),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('Hapus Semua Data?',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          content: const Text(
+              'Tindakan ini permanen dan tidak dapat dibatalkan. Semua daftar barang Anda akan direset menjadi kosong.'),
           actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
           actions: [
             Row(
@@ -76,9 +76,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onPressed: () => Navigator.pop(context, false),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Batal', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                    child: const Text('Batal',
+                        style: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -90,9 +93,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Hapus', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Hapus',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -129,7 +134,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1),
+                  color: (isDark ? Colors.white : AppTheme.slate900)
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -140,7 +146,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: AppTheme.emerald.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.inventory_2_rounded, color: AppTheme.emerald, size: 40),
+                child: const Icon(Icons.inventory_2_rounded,
+                    color: AppTheme.emerald, size: 40),
               ),
               const SizedBox(height: 20),
               Text(
@@ -168,7 +175,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.5,
-                  color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.7),
+                  color: (isDark ? Colors.white : AppTheme.slate900)
+                      .withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 32),
@@ -180,10 +188,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     backgroundColor: AppTheme.emerald,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                     elevation: 0,
                   ),
-                  child: const Text('Tutup', style: TextStyle(fontWeight: FontWeight.w800)),
+                  child: const Text('Tutup',
+                      style: TextStyle(fontWeight: FontWeight.w800)),
                 ),
               ),
             ],
@@ -199,7 +209,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final controller = context.watch<ItemController>();
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
+      backgroundColor:
+          isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
       appBar: AppBar(
         title: const Text('Pengaturan'),
         backgroundColor: Colors.transparent,
@@ -226,12 +237,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: 'Profil Saya',
                 subtitle: SettingsService.userName,
                 onTap: () async {
-                  await Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
+                  await Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()));
                   setState(() {});
                 },
                 isDark: isDark,
               ),
-
               _buildSettingsRow(
                 icon: Icons.fingerprint_rounded,
                 iconColor: Colors.teal,
@@ -240,7 +251,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   value: SettingsService.pinEnabled,
                   onChanged: (v) async {
                     if (v) {
-                      final result = await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => const PinLockScreen(isSetupMode: true)));
+                      final result = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  const PinLockScreen(isSetupMode: true)));
                       if (result == true) setState(() {});
                     } else {
                       await SettingsService.togglePinLock(false);
@@ -255,13 +270,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-
           _buildSectionHeader('Preferensi', isDark),
           _buildSettingsGroup(
             isDark: isDark,
             children: [
               _buildSettingsRow(
-                icon: isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                icon:
+                    isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
                 iconColor: AppTheme.emerald,
                 title: 'Tema Gelap (Dark Mode)',
                 trailing: Switch(
@@ -289,7 +304,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         setState(() {});
                         _showMockupSnackBar(context, 'Notifikasi Diaktifkan');
                       } else {
-                        _showMockupSnackBar(context, 'Izin notifikasi ditolak!');
+                        _showMockupSnackBar(
+                            context, 'Izin notifikasi ditolak!');
                         await SettingsService.toggleWarrantyNotif(false);
                         setState(() {});
                       }
@@ -306,7 +322,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-
           _buildSectionHeader('Data & Laporan', isDark),
           _buildSettingsGroup(
             isDark: isDark,
@@ -329,7 +344,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-
           _buildSectionHeader('Bantuan & Informasi', isDark),
           _buildSettingsGroup(
             isDark: isDark,
@@ -339,7 +353,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 iconColor: Colors.green,
                 title: 'Pusat Bantuan & FAQ',
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const FaqScreen()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const FaqScreen()));
                 },
                 isDark: isDark,
               ),
@@ -354,13 +369,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.code_rounded,
                 iconColor: Colors.brown,
                 title: 'Hubungi Developer',
-                onTap: () => _launchUrl('https://github.com/MuhammadIsakiPrananda1'),
+                onTap: () =>
+                    _launchUrl('https://github.com/MuhammadIsakiPrananda1'),
                 isDark: isDark,
                 isLast: true,
               ),
             ],
           ),
-
           const SizedBox(height: 20),
           Center(
             child: Column(
@@ -368,7 +383,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   'NEVERLAND STUDIO',
                   style: TextStyle(
-                    color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2),
+                    color: (isDark ? Colors.white : AppTheme.slate900)
+                        .withValues(alpha: 0.2),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -378,7 +394,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   'v1.4.0',
                   style: TextStyle(
-                    color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1),
+                    color: (isDark ? Colors.white : AppTheme.slate900)
+                        .withValues(alpha: 0.1),
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1,
@@ -408,13 +425,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSettingsGroup({required List<Widget> children, required bool isDark}) {
+  Widget _buildSettingsGroup(
+      {required List<Widget> children, required bool isDark}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: isDark ? AppTheme.slate800.withValues(alpha: 0.5) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05)),
+        border: Border.all(
+            color: (isDark ? Colors.white : AppTheme.slate900)
+                .withValues(alpha: 0.05)),
       ),
       child: Column(
         children: children,
@@ -443,7 +463,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ? null
               : Border(
                   bottom: BorderSide(
-                    color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
+                    color: (isDark ? Colors.white : AppTheme.slate900)
+                        .withValues(alpha: 0.05),
                   ),
                 ),
         ),
@@ -467,7 +488,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: titleColor ?? (isDark ? Colors.white : AppTheme.slate900),
+                      color: titleColor ??
+                          (isDark ? Colors.white : AppTheme.slate900),
                     ),
                   ),
                   if (subtitle != null) ...[
@@ -484,7 +506,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
-            if (trailing != null) trailing else if (onTap != null) const Icon(Icons.chevron_right_rounded, color: AppTheme.slate400, size: 20),
+            if (trailing != null)
+              trailing
+            else if (onTap != null)
+              const Icon(Icons.chevron_right_rounded,
+                  color: AppTheme.slate400, size: 20),
           ],
         ),
       ),
