@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import '../controllers/item_controller.dart';
 import '../widgets/item_card.dart';
@@ -93,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           return ItemCard(
                             key: ValueKey(item.id),
                             item: item,
+                            heroTag: 'home_${item.id}',
                             isSelected: _selectedItems.contains(item.id),
                             onLongPress: () {
                               if (!_isSelectionMode) {
@@ -213,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _controller.allItems.where((i) => i.isFavorite).length;
 
         return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -264,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color:
             (isDark ? AppTheme.slate800 : Colors.white).withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: color.withValues(alpha: 0.2),
         ),
@@ -291,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Expanded(
             child: Container(
-              height: 54,
+              height: 48,
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: (isDark ? AppTheme.slate800 : Colors.white)
@@ -346,8 +348,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: InkWell(
               onTap: _showFilterBottomSheet,
               child: Container(
-                width: 54,
-                height: 54,
+                width: 48,
+                height: 48,
                 alignment: Alignment.center,
                 child: Icon(Icons.tune_rounded,
                     color: isDark ? Colors.white : AppTheme.slate700, size: 22),
@@ -484,22 +486,22 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Text(
           'NEVERLAND STUDIO',
-          style: TextStyle(
+          style: GoogleFonts.quicksand(
             color: (isDark ? Colors.white : AppTheme.slate900)
-                .withValues(alpha: 0.1),
-            fontSize: 10,
+                .withValues(alpha: 0.35),
+            fontSize: 11,
             fontWeight: FontWeight.w900,
-            letterSpacing: 3,
+            letterSpacing: 2,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           'v1.4.0',
-          style: TextStyle(
+          style: GoogleFonts.quicksand(
             color: (isDark ? Colors.white : AppTheme.slate900)
-                .withValues(alpha: 0.05),
-            fontSize: 8,
-            fontWeight: FontWeight.w800,
+                .withValues(alpha: 0.2),
+            fontSize: 9,
+            fontWeight: FontWeight.w700,
             letterSpacing: 1,
           ),
         ),

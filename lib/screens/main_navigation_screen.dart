@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'home_screen.dart';
 import 'stats_screen.dart';
-import 'locations_screen.dart';
+import 'history_screen.dart';
 import 'settings_screen.dart';
 import '../theme/app_theme.dart';
 
@@ -19,7 +19,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const StatsScreen(),
-    const LocationsScreen(),
+    const HistoryScreen(),
     const SettingsScreen(),
   ];
 
@@ -79,9 +79,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   label: 'Statistik',
                 ),
                 BottomNavigationBarItem(
-                  icon: Padding(padding: EdgeInsets.only(bottom: 6), child: Icon(Icons.place_outlined)),
-                  activeIcon: Padding(padding: EdgeInsets.only(bottom: 6), child: Icon(Icons.place_rounded)),
-                  label: 'Lokasi',
+                  icon: Padding(padding: EdgeInsets.only(bottom: 6), child: Icon(Icons.history_rounded)),
+                  activeIcon: Padding(padding: EdgeInsets.only(bottom: 6), child: Icon(Icons.history_rounded)),
+                  label: 'Riwayat',
                 ),
                 BottomNavigationBarItem(
                   icon: Padding(padding: EdgeInsets.only(bottom: 6), child: Icon(Icons.settings_outlined)),

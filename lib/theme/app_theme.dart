@@ -51,7 +51,7 @@ class AppTheme {
       );
 
   // --- Card Surfaces ---
-  static BoxDecoration surfaceCard({double radius = 24}) {
+  static BoxDecoration surfaceCard({double radius = 16}) {
     return BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(radius),
@@ -66,7 +66,7 @@ class AppTheme {
     );
   }
 
-  static BoxDecoration darkSurfaceCard({double radius = 24}) {
+  static BoxDecoration darkSurfaceCard({double radius = 16}) {
     return BoxDecoration(
       color: slate800.withValues(alpha: 0.8),
       borderRadius: BorderRadius.circular(radius),
@@ -94,7 +94,7 @@ class AppTheme {
       error: const Color(0xFFEF4444),
     );
 
-    final textTheme = GoogleFonts.comicNeueTextTheme(ThemeData.light().textTheme).apply(
+    final textTheme = GoogleFonts.quicksandTextTheme(ThemeData.light().textTheme).apply(
       bodyColor: slate900,
       displayColor: slate900,
     );
@@ -103,7 +103,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: pearlScaffold,
-      fontFamily: GoogleFonts.comicNeue().fontFamily,
+      fontFamily: GoogleFonts.quicksand().fontFamily,
       textTheme: textTheme,
       
       appBarTheme: AppBarTheme(
@@ -125,7 +125,7 @@ class AppTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(color: emerald.withValues(alpha: 0.08)),
         ),
       ),
@@ -133,21 +133,21 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: emerald.withValues(alpha: 0.1)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: emerald, width: 2),
         ),
-        hintStyle: GoogleFonts.comicNeue(color: slate900.withValues(alpha: 0.35), fontWeight: FontWeight.w400),
-        labelStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w600),
+        hintStyle: GoogleFonts.quicksand(color: slate900.withValues(alpha: 0.35), fontWeight: FontWeight.w400),
+        labelStyle: GoogleFonts.quicksand(fontWeight: FontWeight.w600),
       ),
       
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -157,10 +157,10 @@ class AppTheme {
           foregroundColor: Colors.white,
           backgroundColor: emerald,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w800, fontSize: 16, letterSpacing: 0.3),
-          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 28),
+          textStyle: GoogleFonts.quicksand(fontWeight: FontWeight.w800, fontSize: 15, letterSpacing: 0.3),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
         ),
       ),
 
@@ -175,7 +175,7 @@ class AppTheme {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        titleTextStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w900, fontSize: 22, color: slate900),
+        titleTextStyle: GoogleFonts.quicksand(fontWeight: FontWeight.w900, fontSize: 22, color: slate900),
       ),
       
       chipTheme: ChipThemeData(
@@ -183,7 +183,7 @@ class AppTheme {
         backgroundColor: lightMint,
         selectedColor: emerald,
         side: BorderSide(color: emerald.withValues(alpha: 0.08)),
-        labelStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w700, fontSize: 14, color: slate900),
+        labelStyle: GoogleFonts.quicksand(fontWeight: FontWeight.w700, fontSize: 14, color: slate900),
         secondaryLabelStyle: const TextStyle(color: Colors.white),
       ),
     );
@@ -201,7 +201,7 @@ class AppTheme {
       error: const Color(0xFFF87171),
     );
 
-    final textTheme = GoogleFonts.comicNeueTextTheme(ThemeData.dark().textTheme).apply(
+    final textTheme = GoogleFonts.quicksandTextTheme(ThemeData.dark().textTheme).apply(
       bodyColor: Colors.white.withValues(alpha: 0.9),
       displayColor: Colors.white,
     );
@@ -210,7 +210,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: midnightScaffold,
-      fontFamily: GoogleFonts.comicNeue().fontFamily,
+      fontFamily: GoogleFonts.quicksand().fontFamily,
       textTheme: textTheme,
       
       appBarTheme: AppBarTheme(
@@ -232,7 +232,7 @@ class AppTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
       ),
@@ -240,20 +240,20 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: slate800.withValues(alpha: 0.4),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: emerald, width: 2),
         ),
-        hintStyle: GoogleFonts.comicNeue(color: Colors.white.withValues(alpha: 0.3), fontWeight: FontWeight.w400),
+        hintStyle: GoogleFonts.quicksand(color: Colors.white.withValues(alpha: 0.3), fontWeight: FontWeight.w400),
       ),
       
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -263,10 +263,10 @@ class AppTheme {
           foregroundColor: slate900,
           backgroundColor: emerald,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w800, fontSize: 16, letterSpacing: 0.3),
-          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 28),
+          textStyle: GoogleFonts.quicksand(fontWeight: FontWeight.w800, fontSize: 15, letterSpacing: 0.3),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
         ),
       ),
 
@@ -281,7 +281,7 @@ class AppTheme {
         backgroundColor: slate800,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        titleTextStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white),
+        titleTextStyle: GoogleFonts.quicksand(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.white),
       ),
       
       chipTheme: ChipThemeData(
@@ -289,14 +289,14 @@ class AppTheme {
         backgroundColor: slate700,
         selectedColor: emerald,
         side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-        labelStyle: GoogleFonts.comicNeue(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.white),
+        labelStyle: GoogleFonts.quicksand(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.white),
       ),
       
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: slate700,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        contentTextStyle: GoogleFonts.comicNeue(color: Colors.white, fontWeight: FontWeight.w700),
+        contentTextStyle: GoogleFonts.quicksand(color: Colors.white, fontWeight: FontWeight.w700),
       ),
     );
   }

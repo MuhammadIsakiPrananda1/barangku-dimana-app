@@ -7,6 +7,7 @@ import '../models/category_model.dart';
 import '../theme/app_theme.dart';
 import '../widgets/item_card.dart';
 import 'edit_item_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
@@ -18,14 +19,14 @@ class CategoriesScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.midnightScaffold : AppTheme.pearlScaffold,
       appBar: AppBar(
-        title: const Text('Lainnya'),
+        title: const Text('Kategori'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.quicksand(
           color: isDark ? Colors.white : AppTheme.slate900,
-          fontSize: 18,
-          fontWeight: FontWeight.w800,
+          fontSize: 20,
+          fontWeight: FontWeight.w900,
           letterSpacing: -0.5,
         ),
       ),
@@ -92,8 +93,8 @@ class CategoriesScreen extends StatelessWidget {
                 children: [
                   Text(
                     category.name,
-                    style: TextStyle(
-                      fontSize: 15,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 14,
                       fontWeight: FontWeight.w800,
                       color: isDark ? Colors.white : AppTheme.slate900,
                     ),
@@ -103,9 +104,9 @@ class CategoriesScreen extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     '$count Barang',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
                       color: AppTheme.slate500,
                     ),
                   ),
@@ -172,14 +173,14 @@ class _CategoryDetailSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(category.name,
-                          style: TextStyle(
+                          style: GoogleFonts.quicksand(
                               fontSize: 24,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white : AppTheme.slate900)),
-                      const Text('Daftar Barang',
-                          style: TextStyle(
+                      Text('Daftar Barang',
+                          style: GoogleFonts.quicksand(
                               fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                               color: AppTheme.slate500)),
                     ],
                   ),

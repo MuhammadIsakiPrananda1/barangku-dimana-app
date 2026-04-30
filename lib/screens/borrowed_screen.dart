@@ -5,6 +5,7 @@ import '../controllers/item_controller.dart';
 import '../widgets/item_card.dart';
 import '../theme/app_theme.dart';
 import 'edit_item_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BorrowedScreen extends StatelessWidget {
   const BorrowedScreen({Key? key}) : super(key: key);
@@ -20,10 +21,10 @@ class BorrowedScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.quicksand(
           color: isDark ? Colors.white : AppTheme.slate900,
-          fontSize: 18,
-          fontWeight: FontWeight.w800,
+          fontSize: 20,
+          fontWeight: FontWeight.w900,
           letterSpacing: -0.5,
         ),
       ),
@@ -44,8 +45,8 @@ class BorrowedScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   Text(
                     'Tidak Ada Barang Dipinjam',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 15,
                       fontWeight: FontWeight.w800,
                       color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.4),
                     ),
@@ -63,6 +64,7 @@ class BorrowedScreen extends StatelessWidget {
               final item = borrowedItems[index];
               return ItemCard(
                 item: item,
+                heroTag: 'borrowed_${item.id}',
                 onTap: () async {
                   await Navigator.push(
                     context,

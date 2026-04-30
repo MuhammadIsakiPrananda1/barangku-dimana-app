@@ -22,10 +22,10 @@ class StatsScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.comicNeue(
+        titleTextStyle: GoogleFonts.quicksand(
           color: isDark ? Colors.white : AppTheme.slate900,
-          fontSize: 22,
-          fontWeight: FontWeight.w800,
+          fontSize: 20,
+          fontWeight: FontWeight.w900,
           letterSpacing: -0.5,
         ),
       ),
@@ -124,6 +124,7 @@ class StatsScreen extends StatelessWidget {
                         if (item.viewCount == 0) return const SizedBox.shrink();
                         return ItemCard(
                           item: item,
+                          heroTag: 'stats_${item.id}',
                           onTap: () async {
                             await Navigator.push(
                               context,

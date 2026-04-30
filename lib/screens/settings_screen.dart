@@ -152,7 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 20),
               Text(
                 'Barangku Dimana?',
-                style: TextStyle(
+                style: GoogleFonts.quicksand(
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : AppTheme.slate900,
@@ -160,12 +160,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'v1.4.0',
-                style: TextStyle(
+                style: GoogleFonts.quicksand(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.slate500,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.emerald,
                 ),
               ),
               const SizedBox(height: 24),
@@ -216,10 +216,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.comicNeue(
+        titleTextStyle: GoogleFonts.quicksand(
           color: isDark ? Colors.white : AppTheme.slate900,
-          fontSize: 22,
-          fontWeight: FontWeight.w800,
+          fontSize: 20,
+          fontWeight: FontWeight.w900,
           letterSpacing: -0.5,
         ),
       ),
@@ -244,7 +244,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 isDark: isDark,
               ),
               _buildSettingsRow(
-                icon: Icons.fingerprint_rounded,
+                icon: Icons.lock_rounded,
                 iconColor: Colors.teal,
                 title: 'Kunci PIN Aplikasi',
                 trailing: Switch(
@@ -260,8 +260,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     } else {
                       await SettingsService.togglePinLock(false);
                       setState(() {});
-                      _showMockupSnackBar(context, 'Kunci PIN Dinonaktifkan');
                     }
+                  },
+                  activeColor: AppTheme.emerald,
+                ),
+                isDark: isDark,
+              ),
+              _buildSettingsRow(
+                icon: Icons.fingerprint_rounded,
+                iconColor: Colors.cyan,
+                title: 'Kunci Sidik Jari',
+                subtitle: 'Gunakan biometrik untuk membuka',
+                trailing: Switch(
+                  value: SettingsService.biometricEnabled,
+                  onChanged: (v) async {
+                    await SettingsService.toggleBiometricLock(v);
+                    setState(() {});
                   },
                   activeColor: AppTheme.emerald,
                 ),
@@ -366,6 +380,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 isDark: isDark,
               ),
               _buildSettingsRow(
+                icon: Icons.chat_rounded,
+                iconColor: Colors.green,
+                title: 'Saluran WhatsApp',
+                subtitle: 'Update info & fitur terbaru',
+                onTap: () =>
+                    _launchUrl('https://whatsapp.com/channel/0029Vb7hUrM23n3a6dSem72v'),
+                isDark: isDark,
+              ),
+              _buildSettingsRow(
                 icon: Icons.code_rounded,
                 iconColor: Colors.brown,
                 title: 'Hubungi Developer',
@@ -382,10 +405,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Text(
                   'NEVERLAND STUDIO',
-                  style: TextStyle(
+                  style: GoogleFonts.quicksand(
                     color: (isDark ? Colors.white : AppTheme.slate900)
-                        .withValues(alpha: 0.2),
-                    fontSize: 10,
+                        .withValues(alpha: 0.35),
+                    fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
                   ),
@@ -393,11 +416,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 4),
                 Text(
                   'v1.4.0',
-                  style: TextStyle(
+                  style: GoogleFonts.quicksand(
                     color: (isDark ? Colors.white : AppTheme.slate900)
-                        .withValues(alpha: 0.1),
+                        .withValues(alpha: 0.2),
                     fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 1,
                   ),
                 ),

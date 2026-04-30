@@ -101,6 +101,75 @@ class _EditItemScreenState extends State<EditItemScreen> {
     }
   }
 
+  void _showFullImagePreview() {
+    if (_imagePath == null) return;
+    
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: Image.file(
+                  File(_imagePath!),
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 10,
+              left: 20,
+              child: ClipOval(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    color: Colors.white10,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: MediaQuery.of(context).padding.bottom + 30,
+              left: 20,
+              right: 20,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _pickImage();
+                      },
+                      icon: const Icon(Icons.edit_rounded, size: 18),
+                      label: const Text('GANTI FOTO', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.emerald,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -162,27 +231,49 @@ class _EditItemScreenState extends State<EditItemScreen> {
     }
 
     return GestureDetector(
-      onTap: _pickImage,
+      onTap: _imagePath == null ? _pickImage : _showFullImagePreview,
       child: Container(
         width: double.infinity,
-        height: 220,
+        height: 240,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), width: 2),
+          border: Border.all(
+            color: _imagePath != null ? AppTheme.emerald.withValues(alpha: 0.3) : (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), 
+            width: _imagePath != null ? 2.5 : 2
+          ),
           image: imgProvider != null ? DecorationImage(image: imgProvider, fit: BoxFit.cover) : null,
         ),
-        child: _imagePath == null 
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 48),
-                const SizedBox(height: 12),
-                Text('UBAH FOTO BARANG', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), letterSpacing: 1.5)),
-              ],
-            ) 
-          : null,
+        child: Stack(
+          children: [
+            if (_imagePath == null)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 48),
+                    const SizedBox(height: 12),
+                    Text('UBAH FOTO BARANG', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), letterSpacing: 1.5)),
+                  ],
+                ),
+              ),
+            if (_imagePath != null)
+              Positioned(
+                top: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: const Icon(Icons.fullscreen_rounded, color: Colors.white, size: 24),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

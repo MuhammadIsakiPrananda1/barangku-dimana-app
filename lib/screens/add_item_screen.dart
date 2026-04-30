@@ -99,6 +99,75 @@ class _AddItemScreenState extends State<AddItemScreen> {
     );
   }
 
+  void _showFullImagePreview() {
+    if (_imagePath == null) return;
+    
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: Image.file(
+                  File(_imagePath!),
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 10,
+              left: 20,
+              child: ClipOval(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    color: Colors.white10,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: MediaQuery.of(context).padding.bottom + 30,
+              left: 20,
+              right: 20,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _showImageSourceDialog();
+                      },
+                      icon: const Icon(Icons.edit_rounded, size: 18),
+                      label: const Text('GANTI FOTO', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.emerald,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildPhotoOption({required IconData icon, required String label, required Color color, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
@@ -189,27 +258,49 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   Widget _buildImageSection(bool isDark) {
     return GestureDetector(
-      onTap: _showImageSourceDialog,
+      onTap: _imagePath == null ? _showImageSourceDialog : _showFullImagePreview,
       child: Container(
         width: double.infinity,
-        height: 140,
+        height: 160,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), width: 1.5),
+          border: Border.all(
+            color: _imagePath != null ? AppTheme.emerald.withValues(alpha: 0.3) : (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.1), 
+            width: _imagePath != null ? 2 : 1.5
+          ),
           image: _imagePath != null ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover) : null,
         ),
-        child: _imagePath == null 
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 32),
-                const SizedBox(height: 8),
-                Text('TAMBAHKAN FOTO BARANG', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), letterSpacing: 1.5)),
-              ],
-            ) 
-          : null,
+        child: Stack(
+          children: [
+            if (_imagePath == null)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_a_photo_outlined, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), size: 32),
+                    const SizedBox(height: 8),
+                    Text('TAMBAHKAN FOTO BARANG', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: (isDark ? Colors.white : AppTheme.slate900).withValues(alpha: 0.2), letterSpacing: 1.5)),
+                  ],
+                ),
+              ),
+            if (_imagePath != null)
+              Positioned(
+                top: 12,
+                right: 12,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: const Icon(Icons.fullscreen_rounded, color: Colors.white, size: 20),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

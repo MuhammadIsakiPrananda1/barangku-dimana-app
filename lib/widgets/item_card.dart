@@ -12,6 +12,8 @@ class ItemCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final Function(bool)? onFavoriteToggle;
   final bool isSelected;
+  final String? heroTag;
+  final bool showThumbnail;
 
   const ItemCard({
     Key? key,
@@ -21,6 +23,8 @@ class ItemCard extends StatelessWidget {
     this.onDelete,
     this.onFavoriteToggle,
     this.isSelected = false,
+    this.heroTag,
+    this.showThumbnail = true,
   }) : super(key: key);
 
   @override
@@ -29,7 +33,7 @@ class ItemCard extends StatelessWidget {
     final categoryColor = CategoryModel.getColorByName(item.kategori);
     
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: isSelected 
             ? (isDark ? AppTheme.emerald.withValues(alpha: 0.15) : AppTheme.emerald.withValues(alpha: 0.1))
@@ -58,12 +62,14 @@ class ItemCard extends StatelessWidget {
               }
             },
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _buildThumbnail(categoryColor),
-                  const SizedBox(width: 14),
+                  if (showThumbnail) ...[
+                    _buildThumbnail(categoryColor),
+                    const SizedBox(width: 14),
+                  ],
                   Expanded(child: _buildDetails(isDark, categoryColor)),
                   _buildActions(isDark),
                 ],
@@ -77,10 +83,10 @@ class ItemCard extends StatelessWidget {
 
   Widget _buildThumbnail(Color categoryColor) {
     return Hero(
-      tag: 'item_${item.id}',
+      tag: heroTag ?? 'item_${item.id}',
       child: Container(
-        width: 60,
-        height: 60,
+        width: 52,
+        height: 52,
         decoration: BoxDecoration(
           color: categoryColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
@@ -102,7 +108,7 @@ class ItemCard extends StatelessWidget {
       child: Icon(
         CategoryModel.getIconByName(item.kategori),
         color: categoryColor.withValues(alpha: 0.5),
-        size: 28,
+        size: 24,
       ),
     );
   }
@@ -150,11 +156,11 @@ class ItemCard extends StatelessWidget {
             ]
           ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           item.namaBarang,
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.w800,
             color: isDark ? Colors.white : AppTheme.slate800,
             letterSpacing: -0.3,

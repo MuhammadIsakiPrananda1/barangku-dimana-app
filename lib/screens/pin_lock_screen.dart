@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:local_auth/local_auth.dart';
 import '../services/settings_service.dart';
 import '../theme/app_theme.dart';
 import 'main_navigation_screen.dart';
@@ -18,6 +19,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
   String _firstSetupPin = '';
   bool _isConfirming = false;
   bool _hasError = false;
+  final LocalAuthentication _auth = LocalAuthentication();
 
   void _onKeyPress(String key) {
     if (_enteredPin.length < 4) {
@@ -74,6 +76,26 @@ class _PinLockScreenState extends State<PinLockScreen> {
       } else {
         _showError();
       }
+    }
+  }
+
+  Future<void> _authenticateWithBiometrics() async {
+    try {
+      final bool didAuthenticate = await _auth.authenticate(
+        localizedReason: 'Gunakan sidik jari untuk membuka aplikasi',
+      );
+
+      if (didAuthenticate) {
+        HapticFeedback.heavyImpact();
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+          );
+        }
+      }
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
     }
   }
 
@@ -202,7 +224,16 @@ class _PinLockScreenState extends State<PinLockScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const SizedBox(width: 70), // empty space
+              SizedBox(
+                width: 70,
+                child: (!widget.isSetupMode && SettingsService.biometricEnabled)
+                    ? IconButton(
+                        onPressed: _authenticateWithBiometrics,
+                        icon: Icon(Icons.fingerprint_rounded, color: AppTheme.emerald),
+                        iconSize: 32,
+                      )
+                    : const SizedBox.shrink(),
+              ),
               _buildKey('0', color, isDark),
               SizedBox(
                 width: 70,

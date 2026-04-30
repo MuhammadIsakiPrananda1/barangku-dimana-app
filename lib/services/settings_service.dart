@@ -6,6 +6,7 @@ class SettingsService {
   static const String keyUserAvatar = 'user_avatar';
 
   static const String keyPinEnabled = 'pin_enabled';
+  static const String keyBiometricEnabled = 'biometric_enabled';
   static const String keySavedPin = 'saved_pin';
   static const String keyWarrantyNotif = 'warranty_notif';
 
@@ -13,6 +14,7 @@ class SettingsService {
   static String userAvatar = '';
 
   static bool pinEnabled = false;
+  static bool biometricEnabled = false;
   static String savedPin = '';
   static bool warrantyNotifEnabled = true;
 
@@ -29,6 +31,7 @@ class SettingsService {
     userAvatar = prefs.getString(keyUserAvatar) ?? '';
 
     pinEnabled = prefs.getBool(keyPinEnabled) ?? false;
+    biometricEnabled = prefs.getBool(keyBiometricEnabled) ?? false;
     savedPin = prefs.getString(keySavedPin) ?? '';
     warrantyNotifEnabled = prefs.getBool(keyWarrantyNotif) ?? true;
   }
@@ -47,6 +50,12 @@ class SettingsService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(keyPinEnabled, value);
     await prefs.setString(keySavedPin, pin);
+  }
+
+  static Future<void> toggleBiometricLock(bool value) async {
+    biometricEnabled = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(keyBiometricEnabled, value);
   }
 
   static Future<void> toggleWarrantyNotif(bool value) async {

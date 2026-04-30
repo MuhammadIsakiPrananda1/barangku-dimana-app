@@ -145,22 +145,22 @@ class _SplashScreenState extends State<SplashScreen> {
             
             Text(
               'NEVERLAND STUDIO',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.quicksand(
                 color: AppTheme.slate900.withValues(alpha: 0.8),
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 4,
+                letterSpacing: 2.5,
               ),
             ),
             if (_version.isNotEmpty) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Text(
                 'VERSION $_version'.toUpperCase(),
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.quicksand(
                   color: AppTheme.emerald.withValues(alpha: 0.9),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.5,
                 ),
               ),
             ],
