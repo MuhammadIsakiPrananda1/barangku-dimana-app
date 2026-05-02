@@ -14,6 +14,7 @@ import 'profile_screen.dart';
 import 'pin_lock_screen.dart';
 import 'faq_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:local_auth/local_auth.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -274,7 +275,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 trailing: Switch(
                   value: SettingsService.biometricEnabled,
                   onChanged: (v) async {
-                    await SettingsService.toggleBiometricLock(v);
+                    if (v) {
+                      // Trigger setup/verification before enabling
+                      try {
+                        final auth = LocalAuthentication();
+                        final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
+                        final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+
+                        if (!canAuthenticate) {
+                          _showMockupSnackBar(context, 'Perangkat tidak mendukung biometrik');
+                          return;
+                        }
+
+                        final bool didAuthenticate = await auth.authenticate(
+                          localizedReason: 'Konfirmasi sidik jari untuk mengaktifkan fitur ini',
+                        );
+
+                        if (didAuthenticate) {
+                          await SettingsService.toggleBiometricLock(true);
+                          _showMockupSnackBar(context, 'Sidik Jari Diaktifkan');
+                        } else {
+                          _showMockupSnackBar(context, 'Verifikasi Gagal');
+                        }
+                      } catch (e) {
+                        _showMockupSnackBar(context, 'Error: $e');
+                      }
+                    } else {
+                      await SettingsService.toggleBiometricLock(false);
+                      _showMockupSnackBar(context, 'Sidik Jari Dinonaktifkan');
+                    }
                     setState(() {});
                   },
                   activeColor: AppTheme.emerald,

@@ -21,7 +21,12 @@ class _PinLockScreenState extends State<PinLockScreen> {
   bool _hasError = false;
   final LocalAuthentication _auth = LocalAuthentication();
 
-  void _onKeyPress(String key) {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> _onKeyPress(String key) async {
     if (_enteredPin.length < 4) {
       HapticFeedback.lightImpact();
       setState(() {
@@ -81,6 +86,16 @@ class _PinLockScreenState extends State<PinLockScreen> {
 
   Future<void> _authenticateWithBiometrics() async {
     try {
+      // Check if biometrics are available on device
+      final bool canAuthenticateWithBiometrics = await _auth.canCheckBiometrics;
+      final bool canAuthenticate = canAuthenticateWithBiometrics || await _auth.isDeviceSupported();
+
+      if (!canAuthenticate) return;
+
+      final List<BiometricType> availableBiometrics = await _auth.getAvailableBiometrics();
+
+      if (availableBiometrics.isEmpty) return;
+
       final bool didAuthenticate = await _auth.authenticate(
         localizedReason: 'Gunakan sidik jari untuk membuka aplikasi',
       );
@@ -95,7 +110,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
         }
       }
     } on PlatformException catch (e) {
-      debugPrint(e.toString());
+      debugPrint("Biometric Error: ${e.message}");
     }
   }
 

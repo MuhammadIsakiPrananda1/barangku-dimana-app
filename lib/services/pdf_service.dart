@@ -155,6 +155,102 @@ class PdfService {
     );
   }
 
+  static Future<void> generateItemLabels(List<ItemModel> items) async {
+    final pdf = pw.Document();
+    
+    final fontRegular = await PdfGoogleFonts.poppinsRegular();
+    final fontBold = await PdfGoogleFonts.poppinsBold();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(20),
+        theme: pw.ThemeData.withFont(
+          base: fontRegular,
+          bold: fontBold,
+        ),
+        build: (pw.Context context) {
+          return [
+            pw.Header(
+              level: 0,
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('LABEL BARANG - BARANGKU DIMANA?', 
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14, color: PdfColors.teal700)),
+                  pw.Text('Total: ${items.length} Label', 
+                    style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 20),
+            pw.GridView(
+              crossAxisCount: 3,
+              childAspectRatio: 1.0,
+              children: items.map((item) => _buildLabel(item)).toList(),
+            ),
+          ];
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+      name: 'Label_Barang_${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf',
+    );
+  }
+
+  static pw.Widget _buildLabel(ItemModel item) {
+    // Data for QR: prioritize barcode, then fallback to BDM-[ID]
+    final qrData = item.barcode?.isNotEmpty == true 
+        ? item.barcode! 
+        : 'BDM-ID-${item.id ?? item.namaBarang.hashCode}';
+
+    return pw.Container(
+      margin: const pw.EdgeInsets.all(5),
+      padding: const pw.EdgeInsets.all(8),
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
+        borderRadius: pw.BorderRadius.circular(8),
+      ),
+      child: pw.Column(
+        mainAxisAlignment: pw.MainAxisAlignment.center,
+        children: [
+          pw.Text(
+            item.namaBarang.toUpperCase(),
+            maxLines: 1,
+            overflow: pw.TextOverflow.clip,
+            style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, color: PdfColors.teal900),
+            textAlign: pw.TextAlign.center,
+          ),
+          pw.SizedBox(height: 2),
+          pw.Text(
+            item.lokasi,
+            maxLines: 1,
+            overflow: pw.TextOverflow.clip,
+            style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700),
+            textAlign: pw.TextAlign.center,
+          ),
+          pw.Spacer(),
+          pw.Container(
+            height: 60,
+            width: 60,
+            child: pw.BarcodeWidget(
+              barcode: pw.Barcode.qrCode(),
+              data: qrData,
+              drawText: false,
+            ),
+          ),
+          pw.Spacer(),
+          pw.Text(
+            'BARANGKU DIMANA?',
+            style: const pw.TextStyle(fontSize: 5, color: PdfColors.grey400, letterSpacing: 1),
+          ),
+        ],
+      ),
+    );
+  }
+
   static pw.Widget _buildFooter() {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.center,

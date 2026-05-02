@@ -55,6 +55,36 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _printSelectedLabels() async {
+    if (_selectedItems.isEmpty) return;
+
+    HapticFeedback.mediumImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Menyiapkan label...'),
+        duration: Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+
+    final selectedItemModels = _controller.allItems
+        .where((item) => _selectedItems.contains(item.id))
+        .toList();
+
+    try {
+      await PdfService.generateItemLabels(selectedItemModels);
+      setState(() {
+        _selectedItems.clear();
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal membuat PDF: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -192,8 +222,14 @@ class _HomeScreenState extends State<HomeScreen> {
       actions: _isSelectionMode
           ? [
               IconButton(
+                icon: const Icon(Icons.qr_code_2_rounded, color: Colors.white),
+                tooltip: 'Cetak Label QR',
+                onPressed: _printSelectedLabels,
+              ),
+              IconButton(
                 icon:
                     const Icon(Icons.delete_sweep_rounded, color: Colors.white),
+                tooltip: 'Hapus Terpilih',
                 onPressed: () => _showMultiDeleteConfirmation(context),
               ),
             ]
@@ -312,6 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                     color: isDark ? Colors.white : AppTheme.slate900,
                     fontWeight: FontWeight.w600),
+                textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
                   hintText: 'Cari barang...',
                   hintStyle: TextStyle(color: AppTheme.slate400, fontSize: 14),
@@ -321,17 +358,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   filled: false,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   suffixIcon: Row(mainAxisSize: MainAxisSize.min, children: [
                     if (_searchController.text.isNotEmpty)
                       IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
                           icon: const Icon(Icons.close_rounded, size: 18),
                           onPressed: () => _searchController.clear()),
                     IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                         icon: const Icon(Icons.qr_code_scanner_rounded,
                             size: 18, color: AppTheme.emerald),
                         onPressed: _startBarcodeScan),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 12),
                   ]),
                 ),
               ),
